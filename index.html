@@ -1,0 +1,1975 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>직업역량 통합앱 · 진단→직무번역→정량이력→생애설계→서류 · AI 전환설계 연구회</title>
+<meta name="description" content="강점·가치관·직업흥미(홀랜드) 진단부터 자영업/현장 경력의 NCS 직무번역, 정량 이력(자격·학력·훈련·고용보험·직무능력), 생애설계(기대수명·6영역·재무)까지 한 흐름으로 잇고 이력서·자기소개서·경력기술서를 자동 완성하는 규칙기반 통합 웹앱. 무비용·오프라인·개인정보 0.">
+<style>
+  /* ===== 커리어숲 · 직업상담 AI CoP 공통 디자인 토큰 (포레스트그린) ===== */
+  :root{
+    --forest:#1F4A35; --forest-2:#2E6B4E; --forest-3:#3d7d5c; --sage:#6ba585;
+    --gold:#B07E22; --gold-bg:#f3e7cd; --clay:#BE5A3A; --teal:#2A7A87; --teal-bg:#dceef1;
+    --bg:#F5F2EA; --surface:#ffffff; --surface-2:#F0ECE0; --line:#E3DDCC;
+    --ink:#1b2620; --sub:#586a5f; --brand:#1F4A35; --brand-ink:#ffffff;
+    --ok:#2f8f4e; --okbg:#e4f2e8; --warn:#B07E22; --warnbg:#f6ecd4; --danger:#c0492c; --dangerbg:#f6e0da;
+    --tag:#e6efe9; --tagink:#1F4A35; --ncs:#eef2e9; --ncsink:#3a5a44; --ncsline:#d3e0d5;
+    /* RIASEC (홀랜드) */
+    --R:#C0603A; --I:#2C6E9E; --A:#8A5E12; --S:#2E7D5B; --E:#B3261E; --C:#4A5A8A;
+    --shadow:0 8px 30px rgba(31,74,53,.10); --shadow-sm:0 2px 10px rgba(31,74,53,.07);
+    --radius:16px; --maxw:1120px;
+  }
+  html[data-theme="dark"]{
+    --forest:#63c497; --forest-2:#4a9d72; --forest-3:#57b586; --sage:#7fc3a2;
+    --gold:#e0b158; --gold-bg:#3a3220; --clay:#e08a68; --teal:#5cb9c7; --teal-bg:#1d3438;
+    --bg:#0f1613; --surface:#17221d; --surface-2:#1e2b24; --line:#2d3d34;
+    --ink:#e8f0ea; --sub:#9db3a6; --brand:#63c497; --brand-ink:#06231a;
+    --ok:#5fbf90; --okbg:#183226; --warn:#e0b158; --warnbg:#33301f; --danger:#e0765a; --dangerbg:#3a231e;
+    --tag:#22322a; --tagink:#bfe3d0; --ncs:#1f2c25; --ncsink:#bfe0cd; --ncsline:#33473b;
+    --R:#e08a68; --I:#5aa0cf; --A:#d3a34a; --S:#5fbf90; --E:#e0765a; --C:#8a9bd0;
+    --shadow:0 8px 30px rgba(0,0,0,.42); --shadow-sm:0 2px 10px rgba(0,0,0,.3);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion: reduce){html{scroll-behavior:auto};.tag{animation:none!important;opacity:1!important;transform:none!important}}
+  body{background:var(--bg);color:var(--ink);
+    font-family:"Pretendard","Pretendard Variable",-apple-system,"Malgun Gothic",system-ui,sans-serif;
+    line-height:1.62;font-size:16.5px;-webkit-text-size-adjust:100%}
+  a{color:var(--forest-2)}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 18px 100px}
+
+  /* 상단 바 */
+  .topbar{position:sticky;top:0;z-index:60;background:color-mix(in srgb,var(--bg) 90%,transparent);
+    backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  .topbar .inner{max-width:var(--maxw);margin:0 auto;padding:10px 18px;display:flex;align-items:center;gap:10px}
+  .home{display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--ink);font-weight:800;font-size:15px}
+  .logo{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--forest),var(--forest-3));
+    display:grid;place-items:center;color:#fff;font-size:16px;flex:none}
+  .spacer{flex:1}
+  .backlink{font-size:13px;font-weight:700;color:var(--sub);text-decoration:none;padding:8px 12px;border-radius:9px;border:1px solid var(--line);background:var(--surface)}
+  .backlink:hover{color:var(--forest-2)}
+  .themebtn{width:40px;height:40px;border-radius:10px;border:1px solid var(--line);background:var(--surface);
+    color:var(--ink);cursor:pointer;font-size:17px;display:grid;place-items:center;flex:none}
+
+  /* 개인정보 배지 */
+  .privacy{margin:14px 0 4px;background:var(--okbg);border:1px solid color-mix(in srgb,var(--ok) 35%,var(--line));
+    border-radius:11px;padding:10px 14px;font-size:13px;color:var(--ink);display:flex;gap:9px;align-items:flex-start}
+  .privacy b{color:var(--forest-2)}
+  html[data-theme="dark"] .privacy b{color:var(--forest)}
+
+  header.top{margin:20px 0 8px}
+  .badge{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;color:#fff;
+    background:linear-gradient(90deg,var(--forest),var(--forest-3));padding:5px 12px;border-radius:999px;width:max-content}
+  h1.title{font-size:28px;margin:12px 0 6px;letter-spacing:-.6px;line-height:1.24}
+  h1.title .g{color:var(--forest-2)}
+  html[data-theme="dark"] h1.title .g{color:var(--forest)}
+  .lead{color:var(--sub);font-size:15px;max-width:860px}
+
+  /* ===== 스텝 네비 ===== */
+  .stepnav{position:sticky;top:57px;z-index:50;background:var(--surface);border-bottom:1px solid var(--line);margin-top:14px}
+  .stepnav .inner{max-width:var(--maxw);margin:0 auto;padding:9px 18px;display:flex;gap:7px;align-items:stretch;overflow-x:auto}
+  .stepnav button{flex:1;min-width:120px;text-align:left;cursor:pointer;border:1px solid var(--line);background:var(--surface-2);
+    color:var(--ink);border-radius:11px;padding:8px 11px;display:flex;align-items:center;gap:9px;font-family:inherit;transition:.15s}
+  .stepnav button:hover{border-color:var(--forest-3)}
+  .stepnav button.on{background:var(--forest);border-color:var(--forest)}
+  .stepnav button.on .n{background:#fff;color:var(--forest)}
+  .stepnav button.on .lb b,.stepnav button.on .lb span{color:#fff}
+  .stepnav button.done .n{background:var(--ok);color:#fff}
+  .stepnav .n{width:26px;height:26px;border-radius:8px;background:var(--forest);color:#fff;font-weight:800;font-size:13px;display:grid;place-items:center;flex:none}
+  .stepnav .lb b{display:block;font-size:13px;font-weight:800;line-height:1.2}
+  .stepnav .lb span{font-size:11px;color:var(--sub)}
+  @media(max-width:720px){.stepnav .lb span{display:none} .stepnav button{min-width:auto}}
+
+  /* ===== 카드/공통 ===== */
+  .step{display:none;animation:fade .25s}
+  .step.on{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .stephead{margin:22px 0 10px}
+  .kicker{font-size:12px;font-weight:800;color:var(--forest-2);letter-spacing:.4px;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+  html[data-theme="dark"] .kicker{color:var(--forest)}
+  .kicker .k{background:var(--forest);color:#fff;border-radius:7px;padding:2px 9px}
+  h2.sec{font-size:23px;font-weight:900;letter-spacing:-.4px;margin:8px 0 4px;line-height:1.25}
+  .sec-lead{color:var(--sub);font-size:14.5px;max-width:820px;margin:0 0 14px}
+  @media(max-width:620px){h2.sec{font-size:20px}}
+
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px 18px 20px;box-shadow:var(--shadow-sm);margin-top:14px}
+  .card > h3{font-size:15.5px;margin:0 0 10px;display:flex;align-items:center;gap:9px;font-weight:800}
+  .card > h3 .cnum{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:7px;background:var(--forest);color:#fff;font-size:13px;font-weight:800;flex:none}
+  .hint{font-size:13px;color:var(--sub);margin:2px 0 12px}
+
+  label.f{display:block;font-size:13.5px;color:var(--sub);margin:14px 0 6px;font-weight:700}
+  select,input[type=number],input[type=text],textarea{width:100%;padding:11px 12px;border-radius:11px;
+    border:1.5px solid var(--line);background:var(--surface-2);color:var(--ink);font-size:15px;font-family:inherit}
+  textarea{resize:vertical;line-height:1.6}
+  select:focus,input:focus,textarea:focus{outline:none;border-color:var(--forest-3);box-shadow:0 0 0 3px color-mix(in srgb,var(--forest-3) 22%,transparent)}
+
+  /* 칩(선택) */
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+  .chip{border:1.5px solid var(--line);background:var(--surface-2);border-radius:999px;padding:9px 14px;font-size:14px;cursor:pointer;user-select:none;transition:.13s;min-height:40px;display:inline-flex;align-items:center;color:var(--ink)}
+  .chip:hover{border-color:var(--forest-3)}
+  .chip.on{background:var(--forest);color:#fff;border-color:var(--forest);font-weight:700}
+  .chip:focus-visible{outline:3px solid color-mix(in srgb,var(--forest-3) 40%,transparent);outline-offset:2px}
+  .valchip small{display:block;font-size:11px;opacity:.8;font-weight:500}
+
+  /* 버튼 */
+  .btn{margin-top:16px;width:100%;padding:14px;border:0;border-radius:12px;cursor:pointer;font-family:inherit;
+    font-size:16px;font-weight:800;color:#fff;background:linear-gradient(90deg,var(--forest),var(--forest-3));min-height:50px}
+  .btn:hover{filter:brightness(1.06)}.btn:active{transform:translateY(1px)}
+  .btn2{width:100%;padding:11px;border:1.5px solid var(--line);border-radius:11px;cursor:pointer;font-family:inherit;
+    font-size:14px;font-weight:700;color:var(--ink);background:var(--surface-2);min-height:44px;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+  .btn2:hover{border-color:var(--forest-3);color:var(--forest-2)}
+  .actionrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  .actionrow .btn2{flex:1;min-width:130px}
+  .navrow{display:flex;gap:10px;margin-top:22px}
+  .navrow .btn2{flex:1}
+  .navrow .go{background:linear-gradient(90deg,var(--forest),var(--forest-3));color:#fff;border:0;font-size:15px;font-weight:800}
+  .muted{color:var(--sub);font-size:12.5px;margin-top:8px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:760px){.grid2{grid-template-columns:1fr}}
+
+  /* 태그(역량, 출처 구분) */
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0}
+  .tag{border-radius:9px;padding:7px 11px 7px 8px;font-size:13.5px;font-weight:600;display:inline-flex;align-items:center;gap:7px;
+    background:var(--tag);color:var(--tagink);opacity:0;transform:translateY(6px);animation:pop .35s forwards}
+  @keyframes pop{to{opacity:1;transform:none}}
+  .srcdot{font-size:10.5px;font-weight:800;padding:2px 7px;border-radius:6px;color:#fff;flex:none}
+
+  /* NCS 카드 */
+  .ncsWrap{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+  .ncsCard{background:var(--ncs);border:1px solid var(--ncsline);border-radius:12px;padding:13px 15px}
+  .ncsCard .head{display:flex;flex-wrap:wrap;align-items:baseline;gap:7px}
+  .ncsCard .cat{font-size:11.5px;font-weight:800;color:#fff;background:var(--forest-2);padding:3px 8px;border-radius:6px}
+  .ncsCard .sub{font-size:15px;font-weight:800;color:var(--ncsink)}
+  .ncsCard .ncscode{font-size:11px;font-weight:800;color:#fff;background:var(--gold);padding:3px 8px;border-radius:6px;margin-left:auto}
+  .ncsUnits{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .ncsUnit{font-size:12.5px;font-weight:600;color:var(--ncsink);border:1px solid var(--ncsline);border-radius:999px;padding:5px 11px;background:var(--surface)}
+  .ncsLinks{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .ncsLinks a{font-size:12px;font-weight:700;text-decoration:none;color:var(--forest-2);border:1px solid var(--ncsline);border-radius:8px;padding:5px 10px;background:var(--surface)}
+  .ncsLinks a:hover{border-color:var(--forest-3);color:var(--forest-3)}
+
+  .jobs{display:flex;flex-wrap:wrap;gap:8px;margin-top:2px}
+  .job{background:var(--gold-bg);color:var(--gold);border:1px solid color-mix(in srgb,var(--gold) 30%,transparent);border-radius:10px;padding:9px 13px;font-size:13.5px;font-weight:700}
+
+  .beforeafter{display:flex;align-items:stretch;gap:10px;margin-top:12px}
+  .ba{flex:1;background:var(--surface-2);border:1px solid var(--line);border-radius:13px;padding:14px;text-align:center}
+  .ba .num{font-size:32px;font-weight:900;line-height:1.1}
+  .ba.b .num{color:var(--sub)} .ba.a .num{color:var(--forest-2)}
+  html[data-theme="dark"] .ba.a .num{color:var(--forest)}
+  .ba .cap{font-size:12px;color:var(--sub);margin-top:2px}
+  .ba .lab{font-size:12px;font-weight:800;color:var(--sub);letter-spacing:.5px}
+  .baArrow{display:flex;align-items:center;color:var(--forest-2);font-weight:900;font-size:22px}
+
+  /* 베스트5 순위 슬롯 */
+  .best5{display:grid;grid-template-columns:1fr;gap:8px;margin-top:8px}
+  .b5row{display:flex;align-items:center;gap:10px;background:var(--surface-2);border:1px dashed var(--line);border-radius:11px;padding:8px 11px}
+  .b5rank{width:30px;height:30px;border-radius:8px;flex:none;display:grid;place-items:center;font-weight:900;color:#fff;background:var(--forest);font-size:14px}
+  .b5row.filled{border-style:solid;border-color:var(--forest-3);background:var(--surface)}
+  .b5name{flex:1;font-size:14.5px;font-weight:700}
+  .b5empty{flex:1;font-size:13.5px;color:var(--sub)}
+  .b5clear{border:1px solid var(--line);background:var(--surface);color:var(--sub);border-radius:8px;padding:5px 9px;font-size:12px;cursor:pointer}
+  .pickhint{font-size:12.5px;color:var(--sub);margin:8px 0 4px}
+  .rankable{cursor:pointer}
+  .rankbadge{font-size:10.5px;font-weight:900;color:#fff;background:var(--gold);border-radius:5px;padding:1px 6px;margin-left:2px}
+  .diagme{margin-top:10px;padding:11px 13px;border-radius:11px;border:1.5px solid var(--brand);background:var(--surface);font-size:14px;line-height:1.55;color:var(--ink)}
+  .diagme b{color:var(--brand)}
+  .diagme+.diagme{margin-top:8px}
+
+  /* 진단 결과 요약 박스 */
+  .box{border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin-top:10px;font-size:14px}
+  .box.ok{background:var(--okbg)} .box.warn{background:var(--warnbg)} .box.info{background:var(--surface-2)}
+  .box b{color:var(--forest-2)} html[data-theme="dark"] .box b{color:var(--forest)}
+  .notice{margin-top:14px;border:1px solid var(--line);border-radius:11px;padding:12px 14px;font-size:12.5px;color:var(--sub);background:var(--surface-2)}
+  .notice b{color:var(--danger)}
+  .chk{font-size:11px;font-weight:800;color:#fff;background:var(--clay);border-radius:5px;padding:1px 6px;vertical-align:middle}
+
+  /* 홀랜드 문항 */
+  .q{font-size:18px;font-weight:700;margin:6px 0 16px;min-height:52px;display:flex;align-items:center;gap:8px}
+  .q .qn{color:var(--forest-2);font-weight:900;flex:none}
+  .opts{display:flex;flex-direction:column;gap:9px}
+  .opt{border:2px solid var(--line);border-radius:12px;padding:13px 15px;font-size:15.5px;font-weight:700;background:var(--surface-2);cursor:pointer;text-align:center;color:var(--ink);font-family:inherit;transition:.12s}
+  .opt.sel{border-color:var(--forest-2);background:var(--okbg);color:var(--forest-2)}
+  html[data-theme="dark"] .opt.sel{color:var(--forest)}
+  .opt:active{transform:scale(.99)}
+  .prog-bar{height:9px;background:var(--line);border-radius:9px;overflow:hidden;margin:4px 0 12px}
+  .prog-fill{height:100%;background:var(--forest-2);width:0;transition:width .25s}
+  .prog-txt{font-size:13px;color:var(--sub);font-weight:700;text-align:center;margin-bottom:4px}
+  .bar-row{display:flex;align-items:center;gap:10px;margin:8px 0}
+  .bar-lab{width:96px;font-size:13.5px;font-weight:800;flex-shrink:0}
+  .bar-track{flex:1;height:20px;background:var(--line);border-radius:8px;overflow:hidden}
+  .bar-val{height:100%;border-radius:8px;transition:width .8s;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;color:#fff;font-size:11.5px;font-weight:800;width:0}
+  .code-big{text-align:center;font-size:46px;font-weight:900;letter-spacing:4px;margin:2px 0}
+  .tblock{border-left:5px solid var(--forest-2);background:var(--surface-2);border-radius:0 12px 12px 0;padding:12px 15px;margin:12px 0}
+  .tblock h4{margin:0 0 5px;font-size:17px} .tblock .role{font-size:13px;font-weight:800}
+  .tblock p{margin:5px 0 0;font-size:14px}
+
+  /* 정량이력 반복행 */
+  .rowset{margin-top:8px}
+  .qrow{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;background:var(--surface-2);border:1px solid var(--line);border-radius:11px;padding:10px;margin-bottom:8px}
+  .qrow .fld{flex:1;min-width:120px}
+  .qrow .fld label{display:block;font-size:11.5px;color:var(--sub);font-weight:700;margin-bottom:3px}
+  .qrow .fld input{padding:9px 10px;font-size:14px}
+  .qrow .del{border:1px solid var(--line);background:var(--surface);color:var(--danger);border-radius:9px;padding:9px 11px;cursor:pointer;font-size:12.5px;flex:none;font-weight:700}
+  .addrow{border:1.5px dashed var(--line);background:transparent;color:var(--forest-2);border-radius:10px;padding:10px;cursor:pointer;font-size:13.5px;font-weight:700;width:100%;font-family:inherit}
+  .addrow:hover{border-color:var(--forest-3)}
+
+  /* 폐업·재기 지원기관 바로가기 버튼 그리드 */
+  .orggrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:6px}
+  @media(max-width:640px){.orggrid{grid-template-columns:1fr}}
+  .orgbtn{display:flex;flex-direction:column;gap:3px;text-decoration:none;border:1.5px solid var(--line);
+    background:var(--surface-2);border-radius:12px;padding:12px 14px;transition:.14s;min-height:62px;justify-content:center}
+  .orgbtn:hover{border-color:var(--brand);background:var(--surface);transform:translateY(-1px)}
+  .orgbtn .ob-t{font-weight:800;font-size:14.5px;color:var(--ink);display:flex;align-items:center;gap:7px}
+  .orgbtn .ob-d{font-size:12.5px;color:var(--sub);line-height:1.4}
+  .orgbtn .ob-go{margin-left:auto;color:var(--brand);font-weight:800}
+  .orgcat{font-size:12.5px;font-weight:800;color:var(--brand);margin:14px 0 6px;letter-spacing:.02em}
+  .orgcat:first-of-type{margin-top:2px}
+  /* 제도별 상세 안내 아코디언 */
+  .giAcc{margin-top:14px}
+  .giAcc>summary{cursor:pointer;font-weight:800;font-size:13.5px;color:var(--brand);padding:11px 13px;border:1.5px solid var(--line);border-radius:11px;background:var(--surface-2);list-style:none}
+  .giAcc>summary::-webkit-details-marker{display:none}
+  .giAcc>summary::before{content:"▸ "}
+  .giAcc[open]>summary::before{content:"▾ "}
+  .giItem{border:1px solid var(--line);border-radius:11px;padding:12px 14px;margin-top:10px;background:var(--surface)}
+  .giItem h4{margin:0 0 8px;font-size:14.5px;color:var(--ink)}
+  .giRow{display:grid;grid-template-columns:96px 1fr;gap:4px 10px;font-size:13px;color:var(--sub);padding:5px 0;border-top:1px dashed var(--line)}
+  .giRow:first-of-type{border-top:none;padding-top:0}
+  .giRow .k{font-weight:800;color:var(--brand)}
+  .giRow b{color:var(--ink);font-weight:700}
+  @media(max-width:520px){.giRow{grid-template-columns:1fr;gap:2px}}
+
+  /* 생애설계 6영역 휠 + 슬라이더 */
+  .wheelwrap{display:grid;grid-template-columns:300px 1fr;gap:16px;align-items:center}
+  @media(max-width:760px){.wheelwrap{grid-template-columns:1fr}}
+  .sliderrow{margin:10px 0}
+  .sliderrow .top{display:flex;justify-content:space-between;font-size:13.5px;font-weight:700;margin-bottom:4px}
+  .sliderrow .top .v{color:var(--forest-2);font-weight:900}
+  input[type=range]{width:100%;accent-color:var(--forest-2)}
+  .lifebar{display:flex;gap:2px;margin-top:14px;align-items:flex-end;height:70px}
+  .lifeseg{flex:1;border-radius:6px 6px 0 0;display:flex;flex-direction:column;justify-content:flex-end;color:#fff;font-size:10px;font-weight:800;text-align:center;padding:3px 2px;min-height:14px}
+
+  /* 결과 문서(이력서/자소서/경력기술서) */
+  .doc{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-top:12px;line-height:1.7}
+  .doc h4.dt{font-size:18px;margin:0 0 12px;padding-bottom:8px;border-bottom:2px solid var(--forest-2);color:var(--forest-2);display:flex;align-items:center;gap:8px}
+  html[data-theme="dark"] .doc h4.dt{color:var(--forest);border-color:var(--forest)}
+  .doc .dsec{margin:14px 0 4px;font-size:13px;font-weight:800;color:var(--forest-2);letter-spacing:.3px}
+  html[data-theme="dark"] .doc .dsec{color:var(--forest)}
+  table.d{width:100%;border-collapse:collapse;font-size:13.5px;margin:4px 0}
+  table.d th,table.d td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
+  table.d th{background:var(--surface-2);font-weight:800;width:26%;white-space:nowrap}
+  .doc .prose{white-space:pre-wrap;font-size:14.5px}
+  .placeholderline{color:var(--sub);font-style:normal}
+
+  .foot{margin-top:34px;color:var(--sub);font-size:12.5px;text-align:center;line-height:1.9;border-top:1px solid var(--line);padding-top:20px}
+  .foot b{color:var(--warn)}
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);background:var(--forest);color:#fff;
+    padding:11px 18px;border-radius:11px;font-size:14px;font-weight:700;opacity:0;transition:.25s;z-index:100;box-shadow:var(--shadow);pointer-events:none}
+  .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  /* 홀랜드 전용 모달 */
+  .modal{position:fixed;inset:0;z-index:200;background:color-mix(in srgb,var(--bg) 97%,#000);display:none;overflow-y:auto}
+  .modal.on{display:block}
+  .modalinner{max-width:640px;margin:0 auto;padding:14px 18px 70px;min-height:100%}
+  .modalhead{position:sticky;top:0;background:var(--bg);display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--line);font-size:16px;font-weight:900;color:var(--forest-2);z-index:2}
+  html[data-theme="dark"] .modalhead{color:var(--forest)}
+  .modalhead .x{margin-left:auto;width:38px;height:38px;border-radius:9px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-size:16px;cursor:pointer}
+  /* 증명사진 */
+  .photowrap{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px}
+  @media(max-width:680px){.photowrap{grid-template-columns:1fr}}
+  .photopanel{border:1px solid var(--line);border-radius:0 12px 12px 12px;padding:14px;margin-top:-1px;background:var(--surface)}
+  .gmgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
+  @media(max-width:680px){.gmgrid{grid-template-columns:1fr}}
+  .gmver{border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--surface-2);text-align:center}
+  .gmver img{width:100%;max-width:200px;border-radius:8px;border:1px solid var(--line)}
+  .gmlab{font-size:12.5px;font-weight:800;color:var(--forest-2);margin-bottom:6px}
+  html[data-theme="dark"] .gmlab{color:var(--forest)}
+  .gmdl{display:inline-flex;margin-top:8px;text-decoration:none;width:auto}
+  .photobox{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center}
+  .photobox h5{margin:0 0 8px;font-size:13.5px;font-weight:800;color:var(--forest-2)}
+  html[data-theme="dark"] .photobox h5{color:var(--forest)}
+  #camView{width:100%;max-width:250px;border-radius:10px;background:#111;aspect-ratio:3.5/4.5;object-fit:cover;display:none}
+  #photoCanvas{width:158px;height:203px;border:1px solid var(--line);border-radius:8px;background:#fff}
+  .photobtns{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:10px}
+  .photobtns .btn2{width:auto;flex:0 1 auto;min-height:38px;padding:8px 12px;font-size:13px}
+  .phctrl{margin-top:8px;text-align:left}
+  .phctrl label{font-size:12px;color:var(--sub);font-weight:700;display:block;margin:6px 0 2px}
+  .aiguide{margin-top:12px;border:1px solid var(--line);border-radius:11px;background:var(--surface-2);padding:0 14px}
+  .aiguide summary{cursor:pointer;padding:12px 0;font-weight:800;font-size:14px;list-style:none;display:flex;align-items:center;gap:8px}
+  .aiguide summary::-webkit-details-marker{display:none}
+  .aiguide .gbody{padding:0 0 14px;font-size:13.5px;color:var(--sub);line-height:1.7}
+  /* 탭(빈 양식) */
+  .tabbar{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+  .tabbar button{cursor:pointer;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);border-radius:10px 10px 0 0;padding:9px 14px;font-family:inherit;font-size:13.5px;font-weight:700}
+  .tabbar button.on{background:var(--forest);color:#fff;border-color:var(--forest)}
+  .formview{border:1px solid var(--line);border-radius:0 12px 12px 12px;padding:15px;background:var(--surface);white-space:pre-wrap;font-size:13.5px;line-height:1.85;font-family:inherit;margin-top:-1px}
+  /* 첨삭 결과 */
+  .rvitem{display:flex;gap:9px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}
+  .rvitem:last-child{border-bottom:0}
+  .rvmark{flex:none;width:22px;height:22px;border-radius:6px;display:grid;place-items:center;font-size:12px;font-weight:900;color:#fff;margin-top:1px}
+  .rvmark.ok{background:var(--ok)} .rvmark.no{background:var(--danger)} .rvmark.warn{background:var(--warn)}
+  .rvitem .rvt b{color:var(--ink)} .rvitem .rvtip{font-size:12.5px;color:var(--sub);margin-top:2px}
+  /* 생애균형 문항 */
+  .lbq{margin-top:8px;padding:9px 0;border-bottom:1px solid var(--line)}
+  .lbqt{font-size:14px;font-weight:600;margin-bottom:7px}
+  .seg5{display:flex;gap:5px}
+  .seg5 button{flex:1;min-height:38px;border:1.5px solid var(--line);background:var(--surface-2);color:var(--sub);border-radius:9px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;padding:6px 2px}
+  .seg5 button.on{background:var(--forest);color:#fff;border-color:var(--forest)}
+  /* 문서 워크스페이스 */
+  #docEdit{min-height:320px;font-size:14px;line-height:1.75}
+  .docprev{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;margin-top:12px;line-height:1.75}
+  .docprev .rez-top{display:flex;gap:16px;align-items:flex-start}
+  .docprev .rez-photo{width:96px;height:120px;object-fit:cover;border:1px solid var(--line);border-radius:4px;flex:none}
+  .docprev .rez-photo.empty{display:flex;align-items:center;justify-content:center;background:var(--surface-2);color:var(--sub);font-size:11px;text-align:center;padding:4px}
+  .docprev h4.dt{font-size:19px;margin:0 0 10px;padding-bottom:8px;border-bottom:2px solid var(--forest-2);color:var(--forest-2)}
+  html[data-theme="dark"] .docprev h4.dt{color:var(--forest);border-color:var(--forest)}
+  .docprev pre{white-space:pre-wrap;font-family:inherit;font-size:14px;margin:0}
+  /* 채용 진입분야 추천 */
+  .recogrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+  @media(max-width:680px){.recogrid{grid-template-columns:1fr}}
+  .recocard{border:1px solid var(--line);border-radius:12px;padding:13px 14px;background:var(--surface-2)}
+  .recohead{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .reconum{width:22px;height:22px;border-radius:7px;background:var(--forest);color:#fff;font-weight:900;font-size:12px;display:grid;place-items:center;flex:none}
+  .reconame{font-size:15px;font-weight:800;flex:1;min-width:120px}
+  .recofit{font-size:11px;font-weight:800;padding:2px 8px;border-radius:6px;color:#fff}
+  .recofit.fit-상{background:var(--forest-2)} .recofit.fit-중{background:var(--gold)}
+  .recoreason{font-size:12.5px;color:var(--sub);margin:8px 0 6px;line-height:1.6}
+
+  @media print{
+    .topbar,.stepnav,.themebtn,.backlink,.btn,.btn2,.addrow,.navrow,.actionrow,.muted,.privacy,.chips,.opts,.prog-bar,.prog-txt,.stepnav,.pickhint,.modal,.photocam,.aiguide,.tabbar,.no-print{display:none !important}
+    .step{display:block !important;animation:none}
+    body{background:#fff;color:#000;font-size:11.5pt}
+    .card,.doc{box-shadow:none;border:1px solid #bbb;break-inside:avoid}
+    .wrap{padding:0}
+    /* 인쇄 시 산출물 스텝만 강조하고 싶으면 사용자가 해당 스텝에서 인쇄 */
+  }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="inner">
+    <a class="home" href="../index.html"><span class="logo">숲</span><span>AI 전환설계 연구회</span></a>
+    <span class="spacer"></span>
+    <button class="btn2" id="clearAll" style="width:auto;min-height:36px;padding:7px 12px;margin:0">🧹 전체 지우기</button>
+    <a class="backlink" href="../index.html">← 통합 포털</a>
+    <button class="themebtn" id="themeBtn" aria-label="다크모드 전환" title="밝게/어둡게">🌙</button>
+  </div>
+</div>
+
+<div class="wrap">
+  <header class="top">
+    <span class="badge">🧭 직업역량 통합앱 · v5 (진단·직무·이력·생애설계강화·서류편집)</span>
+    <h1 class="title">진단 → 직무 번역 → 정량 이력 → 생애설계 → <span class="g">서류 완성</span></h1>
+    <p class="lead">강점·직업가치관·직업흥미(홀랜드)를 진단하고, 자영업·현장 경력을 <b>노동현장 직무언어와 NCS 직무</b>로 번역합니다.
+      자격·학력·훈련·고용보험·직무능력 등 <b>정량 이력</b>과 <b>생애설계(기대수명·6영역·재무)</b>까지 이어, 마지막에
+      <b>이력서·자기소개서·경력기술서</b>를 자동 완성합니다. 소상공인은 물론 일반 직군도 사용할 수 있습니다.</p>
+    <div class="privacy">
+      <span style="font-size:16px">🔒</span>
+      <span><b>개인정보 0 · 로컬 처리</b> — 이 앱에는 실명·서명 입력란이 없습니다. 모든 계산은 이 브라우저 안에서만 이뤄지며
+      입력값은 서버로 <b>저장·전송되지 않습니다</b>(새로고침하면 지워집니다). 규칙기반이라 같은 입력엔 항상 같은 결과가 나옵니다.</span>
+    </div>
+  </header>
+</div>
+
+<!-- 스텝 네비 -->
+<div class="stepnav" id="top">
+  <div class="inner" id="stepNavInner">
+    <button data-step="0" class="on"><span class="n">1</span><span class="lb"><b>진단 3종</b><span>강점·가치관·흥미</span></span></button>
+    <button data-step="1"><span class="n">2</span><span class="lb"><b>직무 번역</b><span>경력→NCS</span></span></button>
+    <button data-step="2"><span class="n">3</span><span class="lb"><b>정량 이력</b><span>자격·학력·훈련</span></span></button>
+    <button data-step="3"><span class="n">4</span><span class="lb"><b>생애설계</b><span>수명·6영역·재무</span></span></button>
+    <button data-step="4"><span class="n">5</span><span class="lb"><b>서류 완성</b><span>이력서·자소서</span></span></button>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- ══════════ STEP 1 · 진단 3종 ══════════ -->
+  <section class="step on" id="step0">
+    <div class="stephead">
+      <div class="kicker"><span class="k">STEP 1</span> 나를 이해하기</div>
+      <h2 class="sec">진단 3종 — 강점 · 직업가치관 · 직업흥미</h2>
+      <p class="sec-lead">먼저 나를 이해합니다. ① 강점을 고르고 ② 중요하게 여기는 직업가치를 고른 뒤 ③ 직업흥미(홀랜드 RIASEC)를 간편 진단합니다.
+        여기서 도출한 결과는 이후 직무 번역·자기소개서에 자동으로 반영됩니다.</p>
+    </div>
+
+    <!-- 1) 강점 -->
+    <div class="card">
+      <h3><span class="cnum">1</span> 나의 강점 고르기 <span class="pickhint" style="margin:0 0 0 6px">3~5개 권장</span></h3>
+      <p class="hint">주변에서 자주 들은 말, 나도 인정하는 강점을 고르세요. 겹쳐도 괜찮습니다.</p>
+      <div class="chips" id="strChips"></div>
+      <label class="f" for="strEtc">직접 추가 (쉼표로 구분)</label>
+      <input type="text" id="strEtc" placeholder="예: 손이 빠름, 마감을 잘 지킴">
+    </div>
+
+    <!-- 2) 직업가치관 -->
+    <div class="card">
+      <h3><span class="cnum">2</span> 직업가치관 고르기 <span class="pickhint" style="margin:0 0 0 6px">중요한 순으로 3개 권장</span></h3>
+      <p class="hint">"나는 (   ) 직업을 갖고 싶다" — 일에서 무엇을 가장 중요하게 여기는지 고르세요. 먼저 고른 것이 상위 가치가 됩니다.</p>
+      <div class="chips" id="valChips"></div>
+    </div>
+
+    <!-- 3) 직업흥미(홀랜드) — 전용 화면으로 진행 -->
+    <div class="card">
+      <h3><span class="cnum">3</span> 직업흥미 간편 진단 (홀랜드 RIASEC · 30문항 · 약 3분)</h3>
+      <p class="hint">아래 버튼을 누르면 <b>전용 화면</b>이 열립니다. 문항에만 집중해 차분히 진행하고, 끝나면 결과를 담고 돌아옵니다.</p>
+      <div class="box info">6가지 흥미유형(실재 R·탐구 I·예술 A·사회 S·진취 E·관습 C)을 알아봅니다. 결과로 <b>내 홀랜드 코드(상위 2유형)</b>와 <b>어울리는 일</b>을 확인합니다.</div>
+      <button class="btn" id="hlStart">🧭 직업흥미 진단 시작하기 (전용 화면) ▶</button>
+      <div id="hlCardResult"></div>
+    </div>
+
+    <div id="diagSummary"></div>
+
+    <div class="navrow">
+      <button class="btn2 go" data-goto="1">다음: 직무 번역 →</button>
+    </div>
+  </section>
+
+  <!-- ══════════ STEP 2 · 직무 번역 ══════════ -->
+  <section class="step" id="step1">
+    <div class="stephead">
+      <div class="kicker"><span class="k">STEP 2</span> 경력을 조직 언어로</div>
+      <h2 class="sec">직무 번역 — 내 경력을 NCS 직무언어로</h2>
+      <p class="sec-lead">자영업·현장 경력을 인사담당자가 읽는 <b>노동현장 직무언어와 NCS 직무(코드·링크)</b>로 번역합니다.
+        추출된 역량은 <b>어느 일에서 나왔는지 출처가 태그로</b> 표시되고, <b>나의 베스트 5 직무</b>를 직접 순위로 정할 수 있습니다.</p>
+    </div>
+
+    <div class="grid2">
+      <!-- 입력 -->
+      <div class="card">
+        <h3><span class="cnum">1</span> 경력 입력</h3>
+        <label class="f" for="industry">업종</label>
+        <select id="industry" aria-label="업종 선택"></select>
+        <label class="f" for="years">운영/근무 기간 (년)</label>
+        <input type="number" id="years" min="1" max="50" value="10" inputmode="numeric">
+        <label class="f" for="staff">함께 일한 직원 수 (본인 포함)</label>
+        <input type="number" id="staff" min="1" max="200" value="3" inputmode="numeric">
+        <label class="f" id="rolesLabel">직접 수행한 일 <span class="pickhint" style="margin:0">복수 선택</span></label>
+        <div class="chips" id="roleChips" role="group" aria-labelledby="rolesLabel"></div>
+
+        <h3 style="margin-top:20px"><span class="cnum">2</span> 자유서술 → 직무 연결 <span class="pickhint" style="margin:0 0 0 6px">선택</span></h3>
+        <p class="hint">한 일을 편한 말로 적으면 키워드를 찾아 직무·NCS로 연결해 드립니다. (예: "매일 청소를 하고 직원을 가르쳤습니다")</p>
+        <textarea id="freeText" rows="4" placeholder="예) 아침마다 매장 청소를 하고, 신입 직원을 가르치고, 발주와 정산을 직접 했습니다. 손님 응대와 SNS 홍보도 맡았습니다."></textarea>
+        <button class="btn2" id="freeScan" style="margin-top:10px">🔎 문장에서 직무 찾아내기</button>
+        <div id="freeResult"></div>
+
+        <button class="btn" id="run">NCS 직무역량으로 번역하기 →</button>
+        <p class="muted">※ 결과는 이력서 초안입니다. 최종 문장·NCS 코드는 상담사·본인이 검수하세요.</p>
+      </div>
+
+      <!-- 결과 -->
+      <div class="card">
+        <h3><span class="cnum">3</span> 번역 결과 · 베스트5 직무</h3>
+        <div id="transResult">
+          <div class="box info" style="text-align:center;padding:34px 12px">🧭 왼쪽에서 경력을 입력하고 <b>'번역하기'</b>를 눌러 보세요.<br>추출된 역량은 출처 태그와 함께 표시되고,<br>여기서 <b>베스트 5 직무</b>를 순위로 고를 수 있습니다.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="navrow">
+      <button class="btn2" data-goto="0">← 이전</button>
+      <button class="btn2 go" data-goto="2">다음: 정량 이력 →</button>
+    </div>
+  </section>
+
+  <!-- ══════════ STEP 3 · 정량 이력 ══════════ -->
+  <section class="step" id="step2">
+    <div class="stephead">
+      <div class="kicker"><span class="k">STEP 3</span> 기록으로 증명</div>
+      <h2 class="sec">정량 이력 — 자격 · 학력 · 훈련 · 경력 · 직무능력</h2>
+      <p class="sec-lead">이력서에 그대로 옮길 <b>정량 정보</b>를 입력합니다. 직무능력은행·고용24에서 확인한 내용을 붙여 넣으면 좋습니다.
+        여기 입력한 내용은 마지막 <b>이력서</b>에 자동으로 채워집니다. (실명·주민번호 등 식별정보는 넣지 마세요.)</p>
+    </div>
+
+    <div class="card">
+      <h3><span class="cnum">1</span> 학력</h3>
+      <p class="hint">최종 학력 중심으로 적으세요.</p>
+      <div class="rowset" id="rs_edu"></div>
+      <button class="addrow" data-add="edu">＋ 학력 추가</button>
+    </div>
+    <div class="card">
+      <h3><span class="cnum">2</span> 자격증</h3>
+      <p class="hint">자격명·발급기관·취득일. (예: 지게차운전기능사 / 한국산업인력공단 / 2023.11)</p>
+      <div class="rowset" id="rs_cert"></div>
+      <button class="addrow" data-add="cert">＋ 자격증 추가</button>
+    </div>
+    <div class="card">
+      <h3><span class="cnum">3</span> 교육 · 직업훈련</h3>
+      <p class="hint">과정명·기관·기간·시간. 국민내일배움카드 훈련 등.</p>
+      <div class="rowset" id="rs_train"></div>
+      <button class="addrow" data-add="train">＋ 훈련 추가</button>
+    </div>
+    <div class="card">
+      <h3><span class="cnum">4</span> 경력 (고용보험 가입이력 · 사업 운영)</h3>
+      <p class="hint">고용보험 가입이력(재직 경력)과 자영업 운영 경력을 함께 적을 수 있습니다.</p>
+      <div class="rowset" id="rs_emp"></div>
+      <button class="addrow" data-add="emp">＋ 경력 추가</button>
+    </div>
+    <div class="card">
+      <h3><span class="cnum">5</span> 직무능력 · 보유기술</h3>
+      <p class="hint">직무능력은행에서 정리한 능력, 다룰 수 있는 기술을 고르세요. 자유서술·번역기에서 나온 역량과 함께 이력서에 반영됩니다.</p>
+      <div class="chips" id="skillChips"></div>
+      <label class="f" for="skillEtc">직접 추가 (쉼표로 구분)</label>
+      <input type="text" id="skillEtc" placeholder="예: POS 정산, 스마트스토어 운영">
+    </div>
+
+    <div class="card">
+      <h3><span class="cnum">6</span> 증명사진 (선택) — 2가지 방법</h3>
+      <p class="hint">모두 <b>무료·로컬</b>입니다 — 사진이 이 브라우저 밖으로 나가지 않습니다(개인정보 0).</p>
+      <div class="tabbar" id="photoTabs">
+        <button data-pm="local" class="on">무료① 촬영·보정</button>
+        <button data-pm="guide">무료② 외부 도구 안내</button>
+      </div>
+
+      <!-- 모드1: 무료·로컬 촬영·보정 -->
+      <div class="photopanel" data-pm="local">
+        <div class="photowrap">
+          <div class="photobox photocam">
+            <h5>① 찍기 / 불러오기</h5>
+            <video id="camView" playsinline muted></video>
+            <div class="photobtns">
+              <button class="btn2" id="camOn">📷 카메라 켜기</button>
+              <button class="btn2" id="camShot">● 촬영</button>
+              <label class="btn2" style="cursor:pointer;margin:0">🖼 파일 불러오기<input type="file" id="camFile" accept="image/*" style="display:none"></label>
+            </div>
+            <p class="muted" style="text-align:center">카메라는 브라우저 권한 허용이 필요합니다. 안 되면 파일 불러오기를 쓰세요.</p>
+          </div>
+          <div class="photobox">
+            <h5>② 다듬기 (3.5×4.5)</h5>
+            <canvas id="photoCanvas" width="350" height="450"></canvas>
+            <div class="phctrl">
+              <label>밝기 <span id="phBrightV">100</span>%</label>
+              <input type="range" id="phBright" min="60" max="150" value="100">
+              <label>대비 <span id="phContrastV">100</span>%</label>
+              <input type="range" id="phContrast" min="70" max="140" value="100">
+              <label style="display:flex;align-items:center;gap:8px;margin-top:8px"><input type="checkbox" id="phWhite" style="width:auto"> 흰 배경 깔기(투명·여백 보정)</label>
+            </div>
+            <div class="photobtns">
+              <button class="btn2" id="phDownload">📥 사진 저장</button>
+              <button class="btn2" id="phInsert">이력서에 넣기</button>
+              <button class="btn2" id="phClear">빼기</button>
+            </div>
+          </div>
+        </div>
+        <p class="muted">🔒 이 모드는 사진을 <b>이 브라우저 안에서만</b> 처리하며 저장·전송하지 않습니다(개인정보 0).</p>
+      </div>
+
+      <!-- 모드2: 외부 무료 도구 안내 + 프롬프트 -->
+      <div class="photopanel" data-pm="guide" style="display:none">
+        <div class="gbody" style="font-size:13.5px;color:var(--sub);line-height:1.7">
+          위 무료① 모드에서 만든 사진을 저장한 뒤, 아래 <b>무료 AI 도구</b>에 올려 배경 제거·정장 보정을 하세요.
+          <ul style="margin:8px 0;padding-left:18px">
+            <li><b>배경 제거</b>: remove.bg · Canva(배경 제거) · 포토룸(PhotoRoom) — 배경을 흰색으로</li>
+            <li><b>정장·보정</b>: 챗GPT/제미나이 이미지 편집 · Canva AI · 증명사진 AI 앱</li>
+          </ul>
+          아래 프롬프트를 복사해 사진과 함께 요청하세요. <span class="chk">확인</span> AI 결과는 실제 인상과 다를 수 있으니 과한 보정은 피하세요.
+          <button class="btn2" id="phAiPrompt" style="margin-top:8px">📋 AI 변환 프롬프트 복사</button>
+        </div>
+      </div>
+
+      <p class="muted">✨ 정장·배경 완전 변환(AI)이 필요하면 무료② 도구를 쓰시거나, 기관용 <b>AI 사진관(Gemini)</b> 별도 앱을 이용하세요.</p>
+    </div>
+
+    <div class="notice">💡 <b>직무능력은행·고용24 안내</b> — 고용24(work24.go.kr)는 온라인 이력서에 경력을 자동 반영하고, 직무능력은행은 훈련·자격 기반 직무능력 인정서를 발급합니다. 발급 경로·명칭은 기관 사정에 따라 바뀔 수 있어요. <span class="chk">확인</span></div>
+
+    <div class="navrow">
+      <button class="btn2" data-goto="1">← 이전</button>
+      <button class="btn2 go" data-goto="3">다음: 생애설계 →</button>
+    </div>
+  </section>
+
+  <!-- ══════════ STEP 4 · 생애설계 ══════════ -->
+  <section class="step" id="step3">
+    <div class="stephead">
+      <div class="kicker"><span class="k">STEP 4</span> 100세 시대 설계</div>
+      <h2 class="sec">생애설계 — 기대수명 · 6영역 균형 · 재무</h2>
+      <p class="sec-lead">재무만이 아니라 <b>생애설계 6영역의 균형</b>으로 노후를 바라봅니다. ① 기대수명을 추정하고 ② 6영역 만족도를 점검(부족한 곳·개선사항)하며 ③ 재무 상황(부족분·지원기관)을 확인합니다.</p>
+    </div>
+
+    <!-- A. 기대수명 진단 -->
+    <div class="card">
+      <h3><span class="cnum">A</span> 기대수명 진단 (생활습관 기반) <span class="chk">확인</span></h3>
+      <p class="hint">통계청 평균 기대수명(남 81세·여 87세)을 기준으로 생활습관을 반영해 추정하는 <b>교육용 참고 모델</b>입니다. 의학적 예측이 아니며, 가중치는 합리적 추정치입니다.</p>
+      <div class="grid2">
+        <div><label class="f" for="lgAge">현재 나이 (만)</label><input type="number" id="lgAge" min="20" max="95" value="55" inputmode="numeric"></div>
+        <div><label class="f" for="lgSex">성별</label><select id="lgSex"><option value="f">여성</option><option value="m">남성</option></select></div>
+        <div><label class="f" for="lgH">키 (cm)</label><input type="number" id="lgH" min="120" max="220" value="165" inputmode="numeric"></div>
+        <div><label class="f" for="lgW">몸무게 (kg · BMI 계산용)</label><input type="number" id="lgW" min="30" max="200" value="62" inputmode="numeric"></div>
+      </div>
+      <div id="lgFactors"></div>
+      <button class="btn" id="lgRun">기대수명 계산하기 →</button>
+      <div id="lgResult"></div>
+    </div>
+
+    <!-- B. 생애균형 휠 (8영역·22문항) -->
+    <div class="card">
+      <h3><span class="cnum">B</span> 생애균형 휠 (8영역 · 22문항)</h3>
+      <p class="hint">건강·재무·가족관계·사회적관계·여가·경력·사회공헌·마음건강 — 삶의 8영역이 얼마나 균형 잡혀 있는지 진단합니다. 각 문항에 솔직히 답하세요.</p>
+      <div id="lbIntro">
+        <div class="box info">22문항에 5점 척도로 답하면 <b>레이더 차트</b>와 함께 <b>부족한 영역·개선사항</b>을 보고서로 정리해 드립니다.</div>
+        <button class="btn" id="lbStart">생애균형 진단 시작 ▶</button>
+      </div>
+      <div id="lbQuiz" style="display:none"></div>
+      <div id="lbResult" style="display:none"></div>
+    </div>
+
+    <!-- C. 노후자금 계산기 -->
+    <div class="card">
+      <h3><span class="cnum">C</span> 노후자금 계산기 <span class="chk">확인</span></h3>
+      <p class="hint">현재 재정으로 은퇴 후 준비율을 시뮬레이션합니다. 대략만 넣어도 됩니다. 실질가치(물가 반영) 기준 단순 추정이며, 특정 금융상품·투자를 권유하지 않습니다.</p>
+      <div class="grid2">
+        <div><label class="f" for="finAge">현재 나이</label><input type="number" id="finAge" min="20" max="90" value="55" inputmode="numeric"></div>
+        <div><label class="f" for="finRetire">은퇴 나이</label><input type="number" id="finRetire" min="45" max="85" value="62" inputmode="numeric"></div>
+        <div><label class="f" for="finLife">기대수명 (A 결과 자동)</label><input type="number" id="finLife" min="60" max="110" value="86" inputmode="numeric"></div>
+        <div><label class="f" for="finSpend">은퇴 후 월 생활비 (만원·현재가치)</label><input type="number" id="finSpend" min="30" max="2000" value="198" inputmode="numeric"></div>
+        <div><label class="f" for="finAsset">현재 금융자산 (만원)</label><input type="number" id="finAsset" min="0" max="2000000" value="8000" inputmode="numeric"></div>
+        <div><label class="f" for="finSave">매월 저축·투자액 (만원)</label><input type="number" id="finSave" min="0" max="5000" value="50" inputmode="numeric"></div>
+        <div><label class="f" for="finRor">예상 투자수익률 (%/년)</label><input type="number" id="finRor" step="0.1" value="4.0" inputmode="decimal"></div>
+        <div><label class="f" for="finInfl">물가상승률 (%/년)</label><input type="number" id="finInfl" step="0.1" value="2.0" inputmode="decimal"></div>
+        <div><label class="f" for="finPension">국민연금 예상 월 수령액 (만원)</label><input type="number" id="finPension" min="0" max="1000" value="90" inputmode="numeric"></div>
+        <div><label class="f" for="finHome">주택연금 주택시세 (만원·0이면 미사용)</label><input type="number" id="finHome" min="0" max="2000000" value="0" inputmode="numeric"></div>
+        <div><label class="f" for="finHomeAge">주택연금 신청 나이</label><input type="number" id="finHomeAge" min="55" max="90" value="65" inputmode="numeric"></div>
+      </div>
+      <p class="muted">참고 적정 노후생활비(2024): 개인 월 197.6만 · 부부 298.1만원 (국민연금연구원) <span class="chk">확인</span></p>
+      <button class="btn" id="finRun">노후 준비 분석하기 →</button>
+      <div id="finResult"></div>
+    </div>
+
+    <!-- D. 폐업·재기 지원기관 바로가기 -->
+    <div class="card">
+      <h3><span class="cnum">D</span> 폐업·재기 지원제도 안내 · 신청처 <span class="chk">확인</span></h3>
+      <p class="hint">폐업(예정) 소상공인의 <b>점포 정리 → 채무조정 → 기초교육(10h) → 심화교육(30h) → 전직수당 → 재취업·직업훈련 → 정책자금·재도전</b>까지, 공식 신청처와 <b>제도별 상세(대상·금액·기간·서류)</b>를 한곳에 모았습니다. 아래 <b>「제도별 상세 안내」를 펼치면</b> 요건을 확인할 수 있어요. 세부 정책은 변동될 수 있어 각 사이트에서 재확인하세요. (새 창 · 로그인·개인정보 입력은 대표자 본인이 직접)</p>
+
+      <div class="orgcat">① 소상공인 폐업·재기 (소상공인시장진흥공단)</div>
+      <div class="orggrid">
+        <a class="orgbtn" href="https://www.sbiz24.kr" target="_blank" rel="noopener">
+          <span class="ob-t">🏛 소상공인24 <span class="ob-go">↗</span></span>
+          <span class="ob-d">정부·공공 소상공인 지원사업 통합 신청 플랫폼</span></a>
+        <a class="orgbtn" href="https://hope.sbiz.or.kr" target="_blank" rel="noopener">
+          <span class="ob-t">🔁 희망리턴패키지 · 원스톱폐업지원 <span class="ob-go">↗</span></span>
+          <span class="ob-d">사업정리컨설팅 · 법률자문 · 채무조정 <b>신청처</b> (hope.sbiz.or.kr)</span></a>
+        <a class="orgbtn" href="https://www.sbiz24.kr/#/pbanc/567" target="_blank" rel="noopener">
+          <span class="ob-t">🧾 점포철거비 지원 (소상공인24) <span class="ob-go">↗</span></span>
+          <span class="ob-d">폐업 점포 철거·원상복구비 신청은 <b>소상공인24</b>에서 접수 <span class="chk">확인</span></span></a>
+        <a class="orgbtn" href="https://edu.sbiz.or.kr/edu/online/onlineEduList.do" target="_blank" rel="noopener">
+          <span class="ob-t">📚 지식배움터 · 재취업 기초교육(온라인) <span class="ob-go">↗</span></span>
+          <span class="ob-d">온라인교육 → 특화교육 <b>[희망리턴패키지(재취업)]</b> 체크·검색 → 선택한 강의를 교육기간 내 <b>10시간 이상</b> 수강해야 수료 인정 <span class="chk">확인</span></span></a>
+        <a class="orgbtn" href="https://www.sbiz.or.kr/nhrp/edc/edcEduAbout.do" target="_blank" rel="noopener">
+          <span class="ob-t">🎓 재취업 심화교육 신청 <span class="ob-go">↗</span></span>
+          <span class="ob-d">기초교육 수료자 대상 · 1:1 심층상담 + 현장교육 <b>2~3주 30시간 이상</b></span></a>
+        <a class="orgbtn" href="https://www.sbiz.or.kr/nhrp/edc/edcCgjbAbout.do" target="_blank" rel="noopener">
+          <span class="ob-t">💰 전직장려수당(전직지원장려금) <span class="ob-go">↗</span></span>
+          <span class="ob-d">최대 100만원 · 1차 구직 60만 + 2차 취업 40만 (폐업일 ’23.1.1↑) <span class="chk">확인</span></span></a>
+      </div>
+      <p class="muted">📞 소상공인 통합콜센터 <b>1533-0100</b> · 중소기업 통합콜센터 <b>1357</b> · 고용노동부 고용24 <b>1350</b></p>
+
+      <div class="orgcat">② 고용노동부 재취업 · 직업훈련 (고용24)</div>
+      <div class="orggrid">
+        <a class="orgbtn" href="https://www.work24.go.kr" target="_blank" rel="noopener">
+          <span class="ob-t">🧭 국민취업지원제도 <span class="ob-go">↗</span></span>
+          <span class="ob-d">구직촉진수당·취업지원서비스(1·2유형) 신청</span></a>
+        <a class="orgbtn" href="https://www.work24.go.kr/hr/h/a/1100/selectIssuGudn.do" target="_blank" rel="noopener">
+          <span class="ob-t">💳 국민내일배움카드 <span class="ob-go">↗</span></span>
+          <span class="ob-d">직업훈련비 지원(최대 500만원) 카드 발급 신청</span></a>
+      </div>
+
+      <div class="orgcat">③ 재도전 · 정책자금 · 채무조정</div>
+      <div class="orggrid">
+        <a class="orgbtn" href="https://www.newstartfund.or.kr" target="_blank" rel="noopener">
+          <span class="ob-t">🌅 새출발기금 (채무조정) <span class="ob-go">↗</span></span>
+          <span class="ob-d">캠코·신복위 운영 · 상환곤란 소상공인 채무 금리·기간 조정~원금 감면 <span class="chk">확인</span></span></a>
+        <a class="orgbtn" href="https://ols.sbiz.or.kr" target="_blank" rel="noopener">
+          <span class="ob-t">🏦 소상공인 정책자금 <span class="ob-go">↗</span></span>
+          <span class="ob-d">경영안정·성장기반 융자 온라인 신청 (09~24시) · ☎1357</span></a>
+        <a class="orgbtn" href="https://www.modoo.or.kr" target="_blank" rel="noopener">
+          <span class="ob-t">🚀 모두의 창업 <span class="ob-go">↗</span></span>
+          <span class="ob-d">예비·초기창업자 지원사업·멘토링·피칭 정보 (재창업 재도전) <span class="chk">확인</span></span></a>
+      </div>
+
+      <details class="giAcc">
+        <summary>📋 제도별 상세 안내 — 대상 · 지원내용 · 신청기한 · 제출서류 (펼쳐보기)</summary>
+
+        <div class="giItem">
+          <h4>🔁 원스톱 폐업지원 (희망리턴패키지)</h4>
+          <div class="giRow"><span class="k">신청분야</span><span>① 사업정리컨설팅 ② 채무조정·법률자문 ③ 점포철거비 지원</span></div>
+          <div class="giRow"><span class="k">대상</span><span>폐업(예정) 소상공인 · 사업정리컨설팅·법률자문은 <b>폐업일 2023.1.1 이후</b></span></div>
+          <div class="giRow"><span class="k">’26 접수</span><span>컨설팅 1/19~ · 점포철거비 1/28~ · 법률·채무조정 4/3~ (예산 소진 시 마감)</span></div>
+          <div class="giRow"><span class="k">신청처</span><span>컨설팅·법률·채무조정 = <b>희망리턴패키지</b>(hope.sbiz.or.kr) · 점포철거비 = <b>소상공인24</b>(sbiz24.kr)</span></div>
+        </div>
+
+        <div class="giItem">
+          <h4>📚 재취업 기초교육 (온라인 e러닝)</h4>
+          <div class="giRow"><span class="k">방식</span><span>온라인(e러닝) · <b>1주 10시간 이상</b> 수강 = 수료 인정</span></div>
+          <div class="giRow"><span class="k">수강법</span><span>지식배움터 온라인교육 → 특화교육 <b>[희망리턴패키지(재취업)]</b> 체크·검색 → <b>선택한 강의</b>만 수료 인정</span></div>
+          <div class="giRow"><span class="k">내용</span><span>변화관리·자아성찰·진로탐색 / 취업 마인드셋 / 목표설정·자소서·면접 / 자격증·지원정책 활용</span></div>
+          <div class="giRow"><span class="k">대상</span><span>폐업·폐업예정(만15~69) · 기폐업은 폐업일 2023.1.1↑ · 운영 60일 이상 · <b>배우자까지 지원</b></span></div>
+        </div>
+
+        <div class="giItem">
+          <h4>🎓 재취업 심화교육</h4>
+          <div class="giRow"><span class="k">대상</span><span>취업 <b>기초교육 수료자</b></span></div>
+          <div class="giRow"><span class="k">방식</span><span>1:1 심층상담(필수 1회) + 현장교육 · <b>2~3주 30시간 이상</b></span></div>
+          <div class="giRow"><span class="k">내용</span><span>심층상담(취업의지·준비도·지원방향) / 전문강사 맞춤형 현장교육 / 사후관리(자소서·면접·성공사례)</span></div>
+        </div>
+
+        <div class="giItem">
+          <h4>💰 전직장려수당 (전직지원장려금) · 최대 100만원</h4>
+          <div class="giRow"><span class="k">1차 60만</span><span>구직활동 — 폐업신고 완료 + <b>취업 심화교육 수료</b>(’25·’26)</span></div>
+          <div class="giRow"><span class="k">2차 40만</span><span>취업완료 — 심화교육 수료 후 취업 + <b>고용보험 가입 60일 이상 근속</b> (1차 지급 후 신청)</span></div>
+          <div class="giRow"><span class="k">대상</span><span>폐업완료 후 구직/취업(만15~69) · 폐업일 2023.1.1↑ · 운영 60일↑ · <b>배우자 지원 불가</b></span></div>
+          <div class="giRow"><span class="k">신청기한</span><span>1차 = 심화교육 수료일로부터 12개월 이내 · 2차 = 1차 지급일로부터 36개월 이내</span></div>
+          <div class="giRow"><span class="k">제출서류</span><span>개인정보동의서·전직장려수당 신청서·폐업사실증명원·사실증명(총사업자등록내역)·통장사본 / 2차 추가: 표준근로계약서·고용보험 자격이력내역서(직종코드 포함)</span></div>
+        </div>
+
+        <div class="giItem">
+          <h4>🌅 새출발기금 (소상공인·자영업자 채무조정)</h4>
+          <div class="giRow"><span class="k">운영</span><span>한국자산관리공사(캠코)·신용회복위원회 · ☎1660-1378</span></div>
+          <div class="giRow"><span class="k">대상</span><span>코로나 등 경영위기로 상환 곤란한 개인사업자·법인소상공인</span></div>
+          <div class="giRow"><span class="k">내용</span><span>연체 89일↓(부실우려) = 신복위 금리·상환기간 조정 / 연체 90일↑(부실) = 캠코 채권 매입·<b>원금 감면</b></span></div>
+        </div>
+      </details>
+    </div>
+
+    <div class="navrow">
+      <button class="btn2" data-goto="2">← 이전</button>
+      <button class="btn2 go" data-goto="4">다음: 서류 완성 →</button>
+    </div>
+  </section>
+
+  <!-- ══════════ STEP 5 · 서류 완성 ══════════ -->
+  <section class="step" id="step4">
+    <div class="stephead">
+      <div class="kicker"><span class="k">STEP 5</span> 결과물 가져가기</div>
+      <h2 class="sec">최종 산출물 — 이력서 · 자기소개서 · 경력기술서</h2>
+      <p class="sec-lead">앞의 진단·직무번역·정량이력을 종합해 세 가지 서류를 자동 완성합니다. 복사·인쇄(PDF)·텍스트 저장으로 가져가세요.</p>
+    </div>
+
+    <!-- 채용 진입분야 추천 (STEP1~3 등록 데이터 종합) -->
+    <div class="card" id="recoCard">
+      <h3><span class="cnum">🎯</span> 채용 진입분야 추천 (등록 데이터 종합)</h3>
+      <p class="hint">STEP1 진단(강점·직업가치관·홀랜드) + STEP2 직무번역(업종·NCS·베스트5) + STEP3 정량이력(자격·훈련)을 종합해
+        진입할 만한 <b>채용 분야 4~5개</b>를 규칙기반으로 추천합니다. 같은 입력엔 같은 결과가 나옵니다(LLM 미사용).</p>
+      <button class="btn" id="recoRun">🎯 진입분야 추천받기</button>
+      <div id="recoResult"></div>
+    </div>
+
+    <!-- 서류 선택 탭 -->
+    <div class="tabbar" id="docTabs">
+      <button data-doc="resume" class="on">📄 이력서</button>
+      <button data-doc="cover">📝 자기소개서</button>
+      <button data-doc="career">📈 경력기술서</button>
+    </div>
+
+    <div class="card" id="docWorkspace">
+      <h3 id="docTitle"><span class="cnum">✍</span> 이력서 작성</h3>
+      <p class="hint" id="docHint">선행 단계(진단·직무번역·정량이력) 결과를 끌어와 초안을 만들고, 아래에서 직접 편집하세요.</p>
+
+      <div class="actionrow">
+        <button class="btn2" id="genDraft" style="background:linear-gradient(90deg,var(--forest),var(--forest-3));color:#fff;border:0;font-weight:800">✨ 선행자료로 초안 자동생성</button>
+        <button class="btn2" id="blankDraft">🗒 빈 양식으로 시작</button>
+      </div>
+
+      <details class="aiguide" style="background:var(--surface-2)">
+        <summary>📎 과거에 쓴 서류 합치기 (붙여넣기 · .txt 첨부) ▾</summary>
+        <div class="gbody">
+          예전에 작성한 서류가 있으면 붙여넣거나 .txt 파일을 올리세요. 선행자료 초안과 <b>합쳐 통합 초안</b>을 만들고 첨삭 기준으로 점검합니다. 내용은 이 브라우저에서만 처리되며 저장·전송되지 않습니다.
+          <textarea id="pastDoc" rows="5" placeholder="예전에 쓴 서류 내용을 여기에 붙여넣으세요." style="margin-top:8px"></textarea>
+          <div class="photobtns" style="justify-content:flex-start;margin-top:8px">
+            <label class="btn2" style="cursor:pointer;margin:0;width:auto">📁 .txt 불러오기<input type="file" id="pastFile" accept=".txt,text/plain" style="display:none"></label>
+            <button class="btn2" id="mergeDraft" style="width:auto">🔗 합쳐서 통합 초안 만들기</button>
+          </div>
+        </div>
+      </details>
+
+      <label class="f" for="docEdit">초안 (직접 편집 가능)</label>
+      <textarea id="docEdit" rows="16" placeholder="위 '초안 자동생성' 또는 '빈 양식으로 시작'을 눌러 시작하세요. 직접 입력해도 됩니다."></textarea>
+
+      <div class="actionrow">
+        <button class="btn2" id="docPreview">👁 미리보기</button>
+        <button class="btn2" id="docCheck">🔎 점검(첨삭)</button>
+        <button class="btn2" id="docPrompt">🤖 AI 첨삭 프롬프트</button>
+        <button class="btn2" id="docCopy">📋 복사</button>
+        <button class="btn2" id="docPrint">🖨 인쇄</button>
+        <button class="btn2" id="docPdf">📄 PDF 만들기</button>
+      </div>
+      <div id="docPreviewArea"></div>
+      <div id="docCheckArea"></div>
+    </div>
+
+    <div class="notice" style="margin-top:18px">⚠ <b>정확성·개인정보 안내</b> — NCS 세분류 직무·8자리 코드는 국가직무능력표준(ncs.go.kr) 기준으로 연결했으며(길버트 검증값), 능력단위는 대표 예시(참고)입니다.
+      기대수명·적정생활비·지원제도 수치는 교육용 참고값이며 <span class="chk">확인</span> 표시 항목은 강의/제출 전 최신 기준으로 재확인하세요.
+      이 서류에는 <b>실명·연락처가 비어 있습니다</b> — 인쇄 후 본인이 직접 적으세요. 모든 계산은 로컬에서만 수행되며 저장·전송되지 않습니다.</div>
+
+    <div class="navrow">
+      <button class="btn2" data-goto="3">← 이전</button>
+    </div>
+  </section>
+
+  <p class="foot">
+    학습조직 「폐업에서 재취업까지, AI 전환설계 연구회」 · 직업역량 통합앱 v5 &nbsp;|&nbsp; 규칙기반 · 무비용 · 로컬 처리 · 개인정보 0<br>
+    통합 소스: 자영업 경력 번역기 v2 · 직무능력은행 경력서류 통합앱 · 홀랜드 약식 직업선호 진단 · 행복성장 진단센터(생애균형·기대수명·노후자금)<br>
+    NCS 세분류·8자리 코드는 ncs.go.kr 기준(길버트 검증). <b>[확인]</b> 표시는 연도·정책에 따라 변동될 수 있어 재확인이 필요한 항목입니다.
+  </p>
+</div>
+
+<!-- 홀랜드 전용 진단 화면(모달) -->
+<div class="modal" id="hlModal" aria-hidden="true">
+  <div class="modalinner">
+    <div class="modalhead"><span>🧭 직업흥미 진단 (홀랜드 RIASEC)</span><button class="x" id="hlClose" aria-label="닫기">✕</button></div>
+    <div id="hlQuiz" style="display:none;margin-top:16px">
+      <div class="prog-txt"><span id="hlNum">1</span> / 30</div>
+      <div class="prog-bar"><div class="prog-fill" id="hlFill"></div></div>
+      <div class="q"><span class="qn" id="hlQn">Q1.</span><span id="hlQt"></span></div>
+      <div class="opts">
+        <button class="opt" data-v="4">매우 그렇다</button>
+        <button class="opt" data-v="3">그렇다</button>
+        <button class="opt" data-v="2">보통이다</button>
+        <button class="opt" data-v="1">아니다</button>
+        <button class="opt" data-v="0">전혀 아니다</button>
+      </div>
+      <button class="btn2" id="hlBack" style="margin-top:12px">← 이전 문항</button>
+    </div>
+    <div id="hlResult" style="display:none;margin-top:16px">
+      <div class="code-big" id="hlCode">—</div>
+      <div style="text-align:center;color:var(--sub);font-size:13px;margin-bottom:6px">나의 홀랜드 코드 (상위 2유형)</div>
+      <div style="text-align:center"><svg id="hlHex" viewBox="0 0 300 280" width="100%" style="max-width:320px"></svg></div>
+      <div id="hlBars"></div>
+      <div id="hlInterp"></div>
+      <button class="btn" id="hlSaveBack" style="margin-top:14px">✅ 결과 담고 돌아가기</button>
+      <button class="btn2" id="hlRedo" style="margin-top:10px">🔄 흥미 진단 다시하기</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ══════════════════════════════════════════════════════════════════
+   직업역량 통합앱 v5 — 규칙기반 · 무비용 · 로컬 처리 · 개인정보 0
+   같은 입력 = 같은 출력 (재현성). 데이터는 아래 상수만 고치면 됩니다.
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ===== 1) 업종별 NCS 직무 매핑 (길버트 검증값 · 8자리 코드) =====
+   각 업종 = { label, base:[공통역량], roles:[{key,label,skills:[]}], ncs:[{cat,sub,code,units:[]}], jobs:[전직 추천], noNcs? } */
+const DATA = {
+  food:{ label:"음식점 · 외식 (한식/분식/일반)",
+    base:["매출·손익 관리","식자재 원가관리","재고·발주 관리","고객 응대(CS)","위생·안전 관리(HACCP 준수)","현금·카드 정산"],
+    roles:[
+      {key:"cook",label:"조리·메뉴 개발",skills:["메뉴 기획·원가 설계","조리 표준화(레시피화)","품질 균일화 관리"]},
+      {key:"hire",label:"직원 채용·교육",skills:["인력 채용·면접","신입 교육·매뉴얼화","근무 스케줄·근태 관리"]},
+      {key:"supply",label:"거래처·구매 관리",skills:["공급처 발굴·단가 협상","구매·입고 관리","거래처 관계 관리"]},
+      {key:"marketing",label:"홍보·배달앱 운영",skills:["배달앱·SNS 마케팅","리뷰·평판 관리","프로모션 기획·정산"]},
+      {key:"money",label:"매출·세무 관리",skills:["일·월 매출 분석","부가세·비용 정산","POS 데이터 관리"]}],
+    ncs:[
+      {cat:"13 음식서비스",sub:"한식조리",code:"13010101",units:["한식 기초조리","위생·안전관리","밥·국·탕 조리"]},
+      {cat:"10 영업판매",sub:"매장판매",code:"10030201",units:["판매 고객응대","상품판매","매장 재고관리"]},
+      {cat:"02 경영·회계·사무",sub:"총무",code:"02020101",units:["자산·비품관리","행사·의전 지원","업무지원"]}],
+    jobs:["외식 프랜차이즈 매장관리자(점장)","프랜차이즈 슈퍼바이저(SV)","식자재·급식 구매 담당(MD)","단체급식 위생·품질 관리","외식업체 본사 운영관리"]},
+  cafe:{ label:"카페 · 베이커리 · 디저트",
+    base:["매출·손익 관리","원재료 원가관리","재고·유통기한 관리","고객 응대(CS)","위생·품질 관리"],
+    roles:[
+      {key:"barista",label:"제조·품질(바리스타/제빵)",skills:["음료·제품 표준 레시피화","품질·맛 균일화 관리","신메뉴 개발"]},
+      {key:"hire",label:"아르바이트 채용·교육",skills:["단시간 인력 채용","업무 매뉴얼·교육","교대 근무 관리"]},
+      {key:"space",label:"매장·공간 운영",skills:["매장 레이아웃·동선 설계","분위기·브랜딩 연출","비품·시설 관리"]},
+      {key:"marketing",label:"SNS·단골 관리",skills:["인스타그램 콘텐츠 운영","단골·멤버십 관리","이벤트 기획"]},
+      {key:"money",label:"정산·발주",skills:["일 매출 마감·정산","원재료 발주·입고","원가율 관리"]}],
+    ncs:[
+      {cat:"13 음식서비스",sub:"커피관리(바리스타)",code:"13010203",units:["에스프레소 음료 제조","커피기계 운용·관리","커피매장 운영관리"]},
+      {cat:"13 음식서비스",sub:"식음료접객",code:"13010201",units:["식음료 접객서비스","주문·계산관리","식음료 위생관리"]},
+      {cat:"10 영업판매",sub:"매장판매",code:"10030201",units:["상품판매","판매 고객응대","매출·재고관리"]}],
+    jobs:["카페·베이커리 프랜차이즈 점장","프랜차이즈 슈퍼바이저(SV)","식품·베이커리 품질관리","카페 창업 교육강사","브랜드 매장 운영관리자"]},
+  retail:{ label:"소매 · 편의점 · 마트",
+    base:["매출·손익 관리","재고 관리","상품 진열(VMD)","고객 응대(CS)","현금·카드 정산"],
+    roles:[
+      {key:"buy",label:"상품 구매·발주",skills:["상품 소싱·발주","재고 회전율 관리","공급처 단가 협상"]},
+      {key:"display",label:"진열·매장 관리",skills:["상품 진열(VMD)","매대 구성·동선 설계","유통기한·로스 관리"]},
+      {key:"hire",label:"직원 채용·교육",skills:["인력 채용","업무 교육","근태·교대 관리"]},
+      {key:"pos",label:"POS·매출 관리",skills:["POS·매출 데이터 분석","일일 정산","고객 구매 패턴 분석"]},
+      {key:"cs",label:"고객·클레임 관리",skills:["고객 클레임 응대","환불·교환 처리","단골 관계 관리"]}],
+    ncs:[
+      {cat:"10 영업판매",sub:"매장판매",code:"10030201",units:["상품판매","판매 고객응대","상품 진열·디스플레이"]},
+      {cat:"02 경영·회계·사무",sub:"유통관리",code:"02040304",units:["유통경로 관리","상품 매입·발주","점포·재고관리"]},
+      {cat:"02 경영·회계·사무",sub:"고객관리(CS)",code:"02010302",units:["고객관계관리(CRM)","고객만족관리","VOC·클레임 대응"]}],
+    jobs:["유통·리테일 매장 관리자(점장)","상품 구매·소싱 담당(MD)","VMD·매장 진열 담당","물류·재고 관리","프랜차이즈 슈퍼바이저(SV)"]},
+  beauty:{ label:"미용 · 뷰티 · 네일 · 피부",
+    base:["매출·손익 관리","고객 예약·응대","위생·안전 관리","재료·재고 관리","정산 관리"],
+    roles:[
+      {key:"tech",label:"시술·기술 서비스",skills:["전문 시술 서비스","고객별 맞춤 상담","트렌드·신기술 습득"]},
+      {key:"crm",label:"고객 관리(재방문)",skills:["고객 이력·선호 관리(CRM)","재방문·단골 관리","예약·노쇼 관리"]},
+      {key:"hire",label:"직원·인턴 관리",skills:["인력 채용","기술 교육·지도","근무 관리"]},
+      {key:"marketing",label:"홍보·SNS",skills:["SNS·후기 마케팅","프로모션 기획","브랜딩"]},
+      {key:"money",label:"매출·재료 관리",skills:["매출 분석","재료 구매·원가 관리","정산"]}],
+    ncs:[
+      {cat:"12 이용·숙박·여행·오락·스포츠",sub:"헤어미용",code:"12010101",units:["헤어커트","헤어펌","헤어컬러"]},
+      {cat:"12 이용·숙박·여행·오락·스포츠",sub:"피부미용",code:"12010102",units:["피부 분석·상담","얼굴관리","신체(전신)관리"]},
+      {cat:"12 이용·숙박·여행·오락·스포츠",sub:"메이크업",code:"12010103",units:["기본 메이크업","웨딩·미디어 메이크업","색조 연출"]},
+      {cat:"12 이용·숙박·여행·오락·스포츠",sub:"네일미용",code:"12010104",units:["네일 위생·기본관리","젤네일","네일아트"]}],
+    jobs:["뷰티·헤어 매장 매니저(실장)","화장품·뷰티 영업·교육 담당","뷰티 아카데미 강사","브랜드 뷰티 트레이너","뷰티샵 프랜차이즈 운영관리"]},
+  edu:{ label:"학원 · 교습소 · 공부방 · 교육",
+    base:["운영·손익 관리","수강생·학부모 상담","커리큘럼 운영","일정·행정 관리","수납 관리"],
+    roles:[
+      {key:"teach",label:"강의·수업 진행",skills:["교육 과정 설계","강의·수업 진행","학습 성취 관리·평가"]},
+      {key:"counsel",label:"상담·모집",skills:["입학·진로 상담","학부모 커뮤니케이션","수강생 모집·등록 관리"]},
+      {key:"manage",label:"운영·행정",skills:["시간표·강사 배정","행정·문서 관리","수납·미납 관리"]},
+      {key:"hire",label:"강사 채용·관리",skills:["강사 채용","강사 교육·관리","수업 품질 관리"]},
+      {key:"marketing",label:"홍보·설명회",skills:["설명회 기획·운영","블로그·SNS 홍보","프로그램 기획"]}],
+    ncs:[
+      {cat:"04 교육·자연·사회과학",sub:"기업교육",code:"04030102",units:["교육과정 개발","교육 운영","교육 평가·강의"]},
+      {cat:"04 교육·자연·사회과학",sub:"평생교육프로그램 기획·개발·평가",code:"04020201",units:["학습요구 분석","프로그램 개발","프로그램 운영·평가"]},
+      {cat:"04 교육·자연·사회과학",sub:"경력지도",code:"04030101",units:["진로·경력 상담","직업정보 제공","취업지원"]}],
+    jobs:["학원·교육기관 운영관리자(실장/원장)","교육 컨설턴트·진로상담사","교육 프로그램 기획(교육 MD)","학습지·방문교육 관리교사","기업 교육·연수 운영담당"]},
+  online:{ label:"온라인 쇼핑몰 · 스마트스토어",
+    base:["매출·손익 관리","재고·물류 관리","고객 응대(CS)","상세페이지 운영","정산 관리"],
+    roles:[
+      {key:"md",label:"상품 소싱·기획(MD)",skills:["상품 소싱·기획","가격·마진 설계","시장·경쟁 분석"]},
+      {key:"content",label:"상세페이지·콘텐츠",skills:["상세페이지 기획·제작","상품 사진·콘텐츠 관리","키워드·SEO 관리"]},
+      {key:"ads",label:"광고·마케팅",skills:["온라인 광고 운영(키워드/SNS)","전환율·ROAS 분석","프로모션 기획"]},
+      {key:"fulfill",label:"주문·배송·CS",skills:["주문·배송 관리","반품·CS 처리","재고·물류 관리"]},
+      {key:"data",label:"데이터·정산",skills:["매출·유입 데이터 분석","정산·세무 관리","채널 운영(스마트스토어 등)"]}],
+    ncs:[
+      {cat:"10 영업판매",sub:"전자상거래",code:"10030102",units:["쇼핑몰 기획·운영","온라인 판매관리","온라인 마케팅"]},
+      {cat:"02 경영·회계·사무",sub:"고객관리(CS)",code:"02010302",units:["고객관계관리(CRM)","고객만족관리","온라인 CS·VOC"]},
+      {cat:"02 경영·회계·사무",sub:"물류관리",code:"02040301",units:["재고관리","입출고·배송관리","창고관리"]}],
+    jobs:["이커머스 온라인 MD","온라인 마케터(퍼포먼스/콘텐츠)","쇼핑몰 운영·CS 매니저","물류·풀필먼트 관리","브랜드 자사몰 운영담당"]},
+  wholesale:{ label:"도소매 · 유통 · 납품",
+    base:["매출·손익 관리","재고·물류 관리","거래처 관리","수금·정산 관리","견적·계약 관리"],
+    roles:[
+      {key:"sales",label:"영업·거래처 개척",skills:["신규 거래처 개척","B2B 영업","견적·단가 협상"]},
+      {key:"supply",label:"구매·소싱",skills:["상품 소싱·구매","공급처 관리","단가 협상"]},
+      {key:"logi",label:"물류·재고",skills:["재고·창고 관리","배송·물류 관리","입출고 관리"]},
+      {key:"credit",label:"수금·여신 관리",skills:["수금·미수금 관리","여신·계약 관리","정산"]},
+      {key:"account",label:"매출·세무 관리",skills:["매출 분석","세금계산서·정산","비용 관리"]}],
+    ncs:[
+      {cat:"02 경영·회계·사무",sub:"유통관리",code:"02040304",units:["유통경로 관리","매입·발주","판매촉진·점포관리"]},
+      {cat:"02 경영·회계·사무",sub:"구매관리",code:"02040101",units:["구매전략 수립","공급업체 관리","구매계약·원가관리"]},
+      {cat:"02 경영·회계·사무",sub:"물류관리",code:"02040301",units:["재고관리","운송·배송관리","창고관리"]}],
+    jobs:["B2B 영업·거래처 관리","구매·SCM 담당(MD)","물류·창고 운영관리","유통·납품 관리","여신·정산 관리"]},
+
+  /* ── 기타 서비스업 세부 분리 (길버트 ncs.go.kr 원문 검증 · 8자리) ── */
+  laundry:{ label:"세탁 · 세탁소",
+    base:["매출·손익 관리","고객 응대(CS)","위생·품질 관리","재료·재고 관리","정산 관리"],
+    roles:[
+      {key:"tech",label:"세탁·기술 작업",skills:["섬유 감별·세탁방법 선택","드라이클리닝·특수세탁","얼룩 제거·마무리 다림질"]},
+      {key:"cs",label:"접수·상담",skills:["세탁물 접수·검수","고객 클레임 응대","완성품 인도·보관 관리"]},
+      {key:"hire",label:"직원 관리",skills:["인력 채용·교육","작업 배분·관리"]},
+      {key:"money",label:"매출·구매 관리",skills:["매출 분석","세제·부자재 구매·원가 관리","정산"]}],
+    ncs:[{cat:"18 섬유·의복",sub:"세탁",code:"18030101",units:["섬유 감별","세탁방법 선택","드라이클리닝"]}],
+    jobs:["세탁 프랜차이즈 매장관리자","세탁공장 품질·공정관리","세탁물류 관리","호텔·병원 린넨 관리","세탁 창업 교육강사"]},
+  print:{ label:"인쇄 · 인쇄소",
+    base:["매출·손익 관리","고객 응대(CS)","작업·품질 관리","재료·재고 관리","정산 관리"],
+    roles:[
+      {key:"tech",label:"인쇄·제작",skills:["인쇄물 생산계획","인쇄기계 조작","인쇄 품질관리"]},
+      {key:"design",label:"편집·디자인",skills:["편집·디자인 작업","시안 제작·교정","후가공 관리"]},
+      {key:"cs",label:"상담·견적",skills:["고객 상담·견적","주문 접수","납기 관리"]},
+      {key:"money",label:"매출·구매 관리",skills:["매출 분석","용지·자재 구매·원가 관리","정산"]}],
+    ncs:[{cat:"22 인쇄·목재·가구·공예",sub:"평판인쇄",code:"22010202",units:["인쇄물 생산계획","인쇄기계 조작","인쇄 품질관리"]}],
+    jobs:["인쇄업체 생산관리자","출력·기획인쇄 영업","편집디자인 실무","인쇄품질 관리","사인·광고물 제작관리"]},
+  carcenter:{ label:"자동차정비 · 카센터",
+    base:["매출·손익 관리","고객 응대(CS)","작업·품질 관리","부품·재고 관리","정산 관리"],
+    roles:[
+      {key:"tech",label:"정비·수리",skills:["자동차 전기·전자장치 정비","일반 정비·점검","정비 품질관리"]},
+      {key:"manage",label:"정비경영·고객관리",skills:["고객 관리·상담","정비 견적 산출","사후관리(A/S)"]},
+      {key:"hire",label:"직원 관리",skills:["정비사 채용·교육","작업 배분·관리"]},
+      {key:"money",label:"매출·구매 관리",skills:["매출 분석","부품 구매·원가 관리","정산"]}],
+    ncs:[
+      {cat:"15 기계",sub:"자동차전기·전자장치정비",code:"15060301",units:["자동차 전기장치 정비","자동차 전자제어장치 정비","고장 진단·점검"]},
+      {cat:"15 기계",sub:"자동차정비경영관리",code:"15060401",units:["고객 관리","정비 견적","사후관리(A/S)"]}],
+    jobs:["자동차 정비센터 관리자(공장장)","정비 견적·서비스 어드바이저","자동차 부품·상품 구매(MD)","정비 프랜차이즈 슈퍼바이저(SV)","자동차 기술교육 강사"]},
+  photo:{ label:"사진 · 사진관 · 스튜디오",
+    base:["매출·손익 관리","고객 예약·응대","작업·품질 관리","장비·재고 관리","정산 관리"],
+    roles:[
+      {key:"tech",label:"촬영·편집",skills:["사진 촬영·연출","사진 편집·보정","인화·출력 관리"]},
+      {key:"cs",label:"상담·예약",skills:["고객 상담·컨셉 협의","예약·일정 관리","완성품 인도"]},
+      {key:"marketing",label:"홍보·SNS",skills:["SNS·포트폴리오 운영","이벤트·프로모션 기획"]},
+      {key:"money",label:"매출·구매 관리",skills:["매출 분석","장비·소모품 구매·원가 관리","정산"]}],
+    ncs:[{cat:"08 문화·예술·디자인·방송",sub:"실용사진",code:"08010202",units:["사진 촬영","사진 연출","사진 편집"]}],
+    jobs:["스튜디오 실장·매니저","상업사진 촬영기사","영상·콘텐츠 제작","사진 편집·리터칭","사진 교육강사"]},
+  flower:{ label:"꽃집 · 화훼",
+    base:["매출·손익 관리","고객 응대(CS)","상품·유통기한 관리","재료·재고 관리","정산 관리"],
+    roles:[
+      {key:"tech",label:"플라워·제작",skills:["꽃다발·화환 제작","신상품·디자인 개발","상품 품질관리"]},
+      {key:"space",label:"매장·운영",skills:["매장 운영관리","진열·연출","시설·비품 관리"]},
+      {key:"deliver",label:"배송·유통",skills:["배송·유통 관리","화훼시장 거래처 관리","발주·입고"]},
+      {key:"marketing",label:"홍보·주문",skills:["SNS·온라인 주문 운영","시즌·이벤트 기획"]},
+      {key:"money",label:"매출·구매 관리",skills:["매출 분석","자재 구매·원가 관리","정산"]}],
+    ncs:[{cat:"24 농림어업",sub:"화훼장식(단위화훼장식)",code:"24010401",units:["매장 운영관리","신상품 개발","배송·유통관리"]}],
+    jobs:["플라워샵 매니저","화훼 디자이너","화훼 도소매·유통 관리","원예·조경 관리","플라워 창업 교육강사"]},
+  elec:{ label:"전자 · 가전 수리 (A/S·수리점)",
+    base:["매출·손익 관리","고객 응대(CS)","작업·품질 관리","부품·재고 관리","정산 관리"],
+    roles:[
+      {key:"tech",label:"정비·수리",skills:["전자제품 점검·진단","전자제품 정비·수리","전자제품 설치"]},
+      {key:"cs",label:"접수·상담",skills:["고객서비스 신청접수(방문예약)","수리 견적·안내","제품 수리방법 교육·안내"]},
+      {key:"hire",label:"직원 관리",skills:["기사 채용·교육","작업 배분·관리"]},
+      {key:"money",label:"매출·구매 관리",skills:["매출 분석","부품 구매·원가 관리","정산"]}],
+    ncs:[{cat:"19 전기·전자",sub:"전자제품설치·정비",code:"19020301",units:["전자제품 점검·정비","전자제품 설치","고객서비스 신청접수(방문예약)","제품 수리방법 교육"]}],
+    jobs:["가전 서비스센터 엔지니어","전자제품 A/S 기사","전자제품 설치기사","서비스센터 운영관리자","전자·가전 기술교육 강사"]},
+  mobile:{ label:"휴대폰 · 스마트폰 수리",
+    base:["매출·손익 관리","고객 응대(CS)","작업·품질 관리","부품·재고 관리","정산 관리"],
+    approxNote:"스마트폰 전용 NCS 세분류는 아직 없어, 스마트폰도 전자제품이므로 <b>전자제품설치·정비(19020301)를 근사 매핑</b>으로 안내합니다. 아래 <b>공통 직무역량</b>도 함께 제공합니다. <span class=\"chk\">확인</span>",
+    roles:[
+      {key:"tech",label:"수리·정비",skills:["스마트폰 점검·진단","부품 교체·수리","데이터·설정 지원"]},
+      {key:"cs",label:"접수·상담",skills:["고객 접수·견적","수리 안내","사후관리"]},
+      {key:"hire",label:"직원 관리",skills:["인력 채용·교육","작업 배분"]},
+      {key:"money",label:"매출·구매 관리",skills:["매출 분석","부품·액세서리 구매·원가 관리","정산"]}],
+    ncs:[{cat:"19 전기·전자",sub:"전자제품설치·정비 (근사)",code:"19020301",approx:true,units:["전자제품 점검·정비","고객서비스 신청접수","제품 수리방법 교육"]}],
+    jobs:["휴대폰 A/S 기사","모바일 기기 수리 엔지니어","통신기기 판매·수리","서비스센터 운영관리자","기술 교육·훈련 강사"]},
+  carwash:{ label:"세차 · 자동차 관리",
+    base:["매출·손익 관리","고객 응대(CS)","작업·품질 관리","용품·재고 관리","정산 관리"],
+    approxNote:"세차 전용 NCS 세분류는 아직 없어, 가장 근접한 <b>자동차관리(150605)</b>와 <b>청소 계열(11020101)</b>을 근사 매핑으로 안내합니다. 아래 <b>공통 직무역량</b>도 함께 제공합니다. <span class=\"chk\">확인</span>",
+    roles:[
+      {key:"tech",label:"세차·차량관리",skills:["세차·광택·코팅","실내 클리닝","차량 상태 점검"]},
+      {key:"cs",label:"접수·상담",skills:["고객 접수·상담","서비스 견적·안내","단골·멤버십 관리"]},
+      {key:"hire",label:"직원 관리",skills:["인력 채용·교육","작업 배분"]},
+      {key:"money",label:"매출·구매 관리",skills:["매출 분석","용품 구매·원가 관리","정산"]}],
+    ncs:[
+      {cat:"15 기계",sub:"자동차관리 (근사)",code:"150605",approx:true,units:["차량 외장 관리","차량 내장 관리","차량 상태 점검"]},
+      {cat:"11 경비·청소",sub:"청소 (근사·참고)",code:"11020101",approx:true,units:["청소 계획","청소 작업","위생 관리"]}],
+    jobs:["세차·디테일링 매장관리자","자동차 관리(디테일링) 전문가","세차 프랜차이즈 슈퍼바이저","차량 외장·용품 판매관리","세차 창업 교육강사"]}
+};
+const NCS_SEARCH="https://www.ncs.go.kr/unity/th03/ncsSearchMain.do";
+/* 고용24(work24) 직업훈련 통합검색 — 키워드(직무·분야명) 기반. 국민내일배움카드/국비 훈련과정 조회 */
+const HRD_SEARCH=(kw)=>`https://www.work24.go.kr/hr/a/a/1100/trnnCrsInf0.do?srchType=all_type&keywordType=1&keyword=${encodeURIComponent((kw||"").trim())}&area=00%7C%EC%A0%84%EA%B5%AD+%EC%A0%84%EC%B2%B4&pageSize=10&pageIndex=1&currentTab=1&tracseTab=1&searchYn=Y&action=trnnCrsInf0Post.do&requestURI=%2Fhr%2Fa%2Fa%2F1100%2FtrnnCrsInf0Post.do`;
+
+/* ===== 2) 홀랜드 RIASEC (약식 진단 · 자체 문항) ===== */
+const T={
+  R:{name:"실재형",eng:"Realistic",role:"손·도구·몸으로 하는 일",
+     desc:"기계·도구·자연·신체 활동을 좋아하고, 눈에 보이는 결과를 만들 때 보람을 느낍니다. 실용적이고 손재주가 있습니다.",
+     jobs:["설비·시설관리","전기·설비 기사","조리사·제과제빵","목공·가구제작","농업·원예","화물·택배 운전","건물 관리","인테리어 시공","반려동물 미용","용접·금속가공"]},
+  I:{name:"탐구형",eng:"Investigative",role:"분석·연구·탐구하는 일",
+     desc:"원인을 파고들고 자료를 분석하는 것을 좋아합니다. 논리적·호기심 많고 스스로 해답을 찾는 데 강합니다.",
+     jobs:["데이터 분석","IT 개발·코딩","품질관리(QC)","의료기사·검사","직업상담 진단","시장조사 분석","회계·세무 감사","환경·안전 분석","교육콘텐츠 기획","검사·연구 보조"]},
+  A:{name:"예술형",eng:"Artistic",role:"창작·표현하는 일",
+     desc:"자유롭게 표현하고 새로운 것을 만드는 데 끌립니다. 감성적·독창적이며 틀에 박힌 일을 답답해합니다.",
+     jobs:["그래픽·편집 디자이너","카피라이터·작가","플로리스트","사진작가","영상 편집","공예·핸드메이드","웹툰·일러스트","인테리어 디자인","SNS 콘텐츠","캘리그라피 강사"]},
+  S:{name:"사회형",eng:"Social",role:"사람을 돕고 가르치는 일",
+     desc:"사람과 어울리고 돕고 가르칠 때 힘이 납니다. 공감 능력이 높고 따뜻하며 협력을 잘합니다.",
+     jobs:["직업상담사","사회복지사","요양보호사","평생교육 강사","코치·멘토","간호조무사","고객상담·CS","유아·아동 교사","심리상담","커뮤니티 매니저"]},
+  E:{name:"진취형",eng:"Enterprising",role:"설득·주도·경영하는 일",
+     desc:"목표를 세워 사람을 이끌고 설득하는 것을 즐깁니다. 도전적·활동적이며 성과와 리더 역할을 좋아합니다.",
+     jobs:["매장운영·자영업","영업·영업관리","마케팅 기획","창업 컨설턴트","공인중개·부동산","프랜차이즈 점주","행사 기획","보험·금융 설계","홍보·PR","쇼핑몰 운영"]},
+  C:{name:"관습형",eng:"Conventional",role:"정리·관리·규칙 다루는 일",
+     desc:"자료를 체계적으로 정리하고 규칙을 지켜 정확히 처리하는 데 강합니다. 꼼꼼하고 성실하며 안정적입니다.",
+     jobs:["경리·회계","총무·사무행정","세무 보조","데이터 입력·관리","재고·물류 관리","은행·창구","문서·기록 관리","병원 원무","공공기관 행정","품질기록 관리"]}
+};
+const HEXORDER=["R","I","A","S","E","C"];
+const OPP={R:"S",S:"R",I:"E",E:"I",A:"C",C:"A"};
+const HQ=[
+  ["R","기계나 도구를 직접 다루거나 고치는 일이 재미있다"],["I","어떤 현상이 왜 그런지 원인을 파고드는 것이 좋다"],
+  ["A","나만의 방식으로 무언가를 만들거나 꾸미는 것을 좋아한다"],["S","다른 사람의 고민을 들어주고 돕는 일이 보람 있다"],
+  ["E","여러 사람을 이끌고 목표를 향해 밀고 나가는 것이 좋다"],["C","자료나 물건을 규칙에 맞게 정리·정돈할 때 마음이 편하다"],
+  ["R","몸을 움직이거나 손으로 하는 활동이 앉아서 하는 일보다 좋다"],["I","숫자·자료를 분석해 결론을 내는 일이 흥미롭다"],
+  ["A","글·그림·음악·사진 등으로 표현하는 활동에 끌린다"],["S","누군가를 가르치거나 안내하는 역할이 잘 맞는다"],
+  ["E","새로운 사업이나 아이디어로 사람을 설득하는 것이 즐겁다"],["C","맡은 일을 정해진 절차대로 정확히 처리하는 편이다"],
+  ["R","실제로 만들어지거나 눈에 보이는 결과물이 있는 일이 좋다"],["I","호기심이 생기면 끝까지 알아봐야 직성이 풀린다"],
+  ["A","정해진 틀보다 자유롭게 일하는 환경이 더 좋다"],["S","팀에서 사람들 사이를 조율하고 화합시키는 편이다"],
+  ["E","경쟁에서 이기거나 성과를 내는 것에 동기가 생긴다"],["C","꼼꼼하게 확인하고 실수 없이 마무리하는 것을 중요하게 여긴다"],
+  ["R","기계·장비·자동차·공구 같은 것에 관심이 많다"],["I","복잡한 문제를 논리적으로 푸는 과정 자체가 즐겁다"],
+  ["A","독창적이고 남들과 다른 아이디어를 자주 떠올린다"],["S","사람들과 어울리며 함께하는 일이 혼자 하는 일보다 좋다"],
+  ["E","기회가 오면 앞장서서 책임지고 이끄는 편이다"],["C","계획표·목록을 만들어 순서대로 일하는 것이 편하다"],
+  ["R","야외·현장에서 몸으로 하는 작업이 잘 맞는다"],["I","전문 지식을 깊이 공부하고 탐구하는 것을 좋아한다"],
+  ["A","분위기·색·디자인 같은 감각적인 요소에 예민하다"],["S","봉사·돌봄처럼 사람에게 도움이 되는 일에 마음이 간다"],
+  ["E","돈을 벌거나 사업을 키우는 일에 관심이 크다"],["C","돈·서류·일정 등을 빈틈없이 관리하는 데 자신 있다"]
+];
+
+/* ===== 3) 강점 / 직업가치관 / 보유기술 (직무능력은행 통합앱 데이터) ===== */
+const STRENGTHS=['성실함','꼼꼼함','책임감','체력','손이 빠름','정리정돈','시간 약속','사람 응대','잘 들어줌','분위기 살림','갈등 조정','설득력','가르치기','리더십','팀워크','문제 해결','침착함','위기 대처','새것 배우기','끈기','숫자 감각','손재주','기획력','꼼꼼한 기록'];
+const VALUES=[
+ ['직업안정','오래 다닐 수 있는 것'],['금전적 보상','수입이 넉넉한 것'],['몸과 마음의 여유','시간·체력에 무리 없는 것'],
+ ['성취','해냈다는 보람'],['봉사','남에게 도움이 되는 것'],['인정','알아주고 인정받는 것'],
+ ['자율성','내 방식대로 하는 것'],['영향력 발휘','이끌고 결정하는 것'],['지식 추구','계속 배우는 것'],
+ ['변화 지향','늘 새로운 일'],['실내 활동','실내에서 편하게'],['개별 활동','혼자 집중해서'],['사회적 관계','사람들과 어울리며']
+];
+const SKILLS=['운전(1종)','운전(2종)','지게차','엑셀','한글/워드','컴퓨터 기본','스마트폰 활용','요리·조리','제과제빵','미싱·재봉','청소·정리','간병·돌봄','아이 돌봄','매장 응대','전화 응대','현금·정산','발주·재고','배달·운송','설비·수리','전기 기초','목공','도배·페인트','농사·원예','사진 촬영','SNS 운영','블로그 글쓰기','행사 진행','회계·장부'];
+
+/* ===== 4) 자유서술 → 직무·NCS 연결 키워드 사전 (규칙기반) =====
+   각 항목 = [ [키워드들], 직무역량 라벨, NCS힌트{cat,sub,code} 또는 null ] */
+const KWMAP=[
+ [["청소","위생","소독","방역","정리정돈"],"위생·안전 관리",{cat:"02 경영·회계·사무",sub:"총무",code:"02020101"}],
+ [["직원 교육","가르치","교육","훈련","지도","신입"],"직원 교육·매뉴얼화",{cat:"04 교육·자연·사회과학",sub:"기업교육",code:"04030102"}],
+ [["채용","면접","뽑","구인"],"인력 채용·면접",{cat:"02 경영·회계·사무",sub:"인사",code:"02010201"}],
+ [["발주","주문","재고","입고","입출고","창고"],"재고·발주 관리",{cat:"02 경영·회계·사무",sub:"물류관리",code:"02040301"}],
+ [["정산","계산","매출","장부","세무","부가세","회계","돈 관리"],"매출·정산 관리",{cat:"02 경영·회계·사무",sub:"회계·감사",code:"02020201"}],
+ [["상담","응대","손님","고객","접객","클레임","컴플레인","환불"],"고객 응대(CS)",{cat:"02 경영·회계·사무",sub:"고객관리(CS)",code:"02010302"}],
+ [["배달","배송","운송","운전","납품","택배"],"배송·물류 관리",{cat:"02 경영·회계·사무",sub:"물류관리",code:"02040301"}],
+ [["요리","조리","음식","메뉴","주방","반찬"],"조리·메뉴 관리",{cat:"13 음식서비스",sub:"한식조리",code:"13010101"}],
+ [["홍보","마케팅","광고","SNS","인스타","블로그","리뷰","이벤트"],"홍보·SNS 마케팅",{cat:"10 영업판매",sub:"전자상거래",code:"10030102"}],
+ [["견적","계약","거래처","납기","단가","협상"],"거래처·견적 관리",{cat:"02 경영·회계·사무",sub:"구매관리",code:"02040101"}],
+ [["수리","기술","작업","시공","설비","정비","조립","제작"],"전문 기술 작업",null],
+ [["운영","관리","총괄","점장","사장","경영"],"매장·운영 관리",{cat:"02 경영·회계·사무",sub:"경영기획",code:"02010101"}],
+ [["예약","스케줄","근태","일정","교대"],"일정·근태 관리",{cat:"02 경영·회계·사무",sub:"총무",code:"02020101"}],
+ [["돌봄","간병","케어","요양","보살"],"돌봄·케어",null],
+ [["진열","디스플레이","매대","연출","VMD"],"상품 진열(VMD)",{cat:"10 영업판매",sub:"매장판매",code:"10030201"}]
+];
+
+/* ===== 5) 생애설계 6영역 (기대수명 강의안 종합 slide19) ===== */
+const LIFE6=[
+ {key:"work",name:"일·제2커리어",tip:"재취업·창업·사회공헌 방향을 STEP2 직무번역·베스트5와 연결해 구체화하세요."},
+ {key:"health",name:"건강·의료·돌봄",tip:"정기검진 일정을 잡고, 운동 루틴 1가지를 이번 주부터 시작해 보세요."},
+ {key:"house",name:"주거",tip:"살 곳·이사·주거비를 점검하고, 고정지출을 재무(STEP C)와 맞춰 보세요."},
+ {key:"relation",name:"관계·사회",tip:"가족·친구·공동체 모임 중 꾸준히 나갈 곳 하나를 정해 보세요."},
+ {key:"mind",name:"심리·마무리",tip:"마음 돌봄 습관을 만들고, 사전연명의료의향서 등 마무리 준비도 알아두세요."},
+ {key:"risk",name:"위험 대비",tip:"장수·물가·긴급상황 대비로 비상금(생활비×3~6개월)을 확보하세요."}
+];
+
+/* ===== 6) 기대수명 생활습관 요인 (교육용 참고 모델 · 기준 76세) [확인] ===== */
+const LG_FACTORS=[
+ {key:"family",q:"가족(부모·형제) 중 장수하신 분이 많다",opts:[["예",2.5],["보통",0],["아니오·질병력 있음",-2.5]]},
+ {key:"smoke",q:"흡연",opts:[["안 함",1.5],["끊었음",0],["현재 흡연",-4]]},
+ {key:"exercise",q:"운동·활동량",opts:[["주 3회 이상",3],["가끔",1],["거의 안 함",-1.5]]},
+ {key:"weight",q:"체중 관리",opts:[["표준 유지",1.5],["약간 과체중",0],["비만·저체중",-1.5]]},
+ {key:"sleep",q:"수면",opts:[["규칙적 6~8시간",1],["불규칙",0],["너무 짧거나 김",-1]]},
+ {key:"relation",q:"사람들과의 교류",opts:[["활발함",1.5],["보통",0],["거의 없음",-1.5]]},
+ {key:"stress",q:"스트레스·감정 조절",opts:[["잘 관리",1.5],["보통",0],["자주 화·불안",-1.5]]},
+ {key:"checkup",q:"정기 건강검진",opts:[["매년 받음",1.5],["가끔",0],["안 받음",-1]]},
+ {key:"happy",q:"삶의 만족감·마음 건강",opts:[["높음",1.5],["보통",0],["낮음",-1.5]]}
+];
+
+/* ===== 7) 재무 참고표·기관 (재무·기대수명 강의안) [확인] ===== */
+/* [name, 연락처(☎ 텍스트), 설명, url(있으면 클릭 링크)] */
+const FIN_ORGS=[
+ ["국민연금공단","☎ 1355","예상 연금액·임의계속·추납 상담",""],
+ ["국민건강보험공단","☎ 1577-1000","건강보험료·피부양자·임의계속",""],
+ ["고용센터 / 고용24","","실업급여·국민내일배움카드·구직등록","https://www.work.go.kr"],
+ ["중장년내일센터","☎ 1350","40세 이상 재취업·생애설계 상담",""],
+ ["복지로","","기초연금 등 복지 신청·자격 조회","https://www.bokjiro.go.kr"],
+ ["중앙노후준비지원센터(국민연금공단)","","노후준비 진단·상담·재무설계·예상연금액 조회","https://csa.nps.or.kr"],
+ ["금융감독원 통합연금포털","내 연금조회","국민·퇴직·개인연금을 한 번에 통합 조회","https://100lifeplan.fss.or.kr"]
+];
+
+/* ══════════════ 상태 ══════════════ */
+const S={
+  strengths:[], strEtc:"", values:[],
+  hlAns:{}, hlDone:false, hlScore:null, hlCode:"", hlSorted:[],
+  industry:"food", years:10, staff:3, roles:[],
+  freeText:"", freeMatches:[],
+  skills:[],            // 번역 결과 추출 역량 [{name,src,srcColor}]
+  best5:[null,null,null,null,null],
+  transDone:false,
+  rows:{edu:[],cert:[],train:[],emp:[]},
+  bankSkills:[], skillEtc:"",
+  life:{}, lifeDone:false,
+  lg:{}, lgResult:null,
+  fin:{}, finResult:null,
+  photo:null
+};
+
+/* ══════════════ 유틸 ══════════════ */
+const $=s=>document.querySelector(s);
+const $$=s=>document.querySelectorAll(s);
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function toast(msg){const t=$("#toast");t.textContent=msg;t.classList.add("on");setTimeout(()=>t.classList.remove("on"),1600);}
+function splitEtc(s){return (s||"").split(/[,，]/).map(x=>x.trim()).filter(Boolean);}
+
+/* 다크모드 */
+(function initTheme(){let t;try{t=localStorage.getItem("cop-theme");}catch(e){}
+  if(!t){t=(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)?"dark":"light";}
+  document.documentElement.setAttribute("data-theme",t);})();
+function paintThemeBtn(){const d=document.documentElement.getAttribute("data-theme")==="dark";$("#themeBtn").textContent=d?"☀️":"🌙";}
+paintThemeBtn();
+$("#themeBtn").onclick=()=>{const c=document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark";
+  document.documentElement.setAttribute("data-theme",c);try{localStorage.setItem("cop-theme",c);}catch(e){}paintThemeBtn();
+  if(S.hlDone)drawHex("#hlHex",S.hlScore,20,true);
+  if(S.lifeDone&&$("#lbHex"))drawRadar("#lbHex",S.lifeBalance,LB.map(a=>a.key),100,LB.map(a=>a.color));};
+
+/* ══════════════ 스텝 네비게이션 ══════════════ */
+let curStep=0;
+function gotoStep(n){
+  curStep=n;
+  $$(".step").forEach((s,i)=>s.classList.toggle("on",i===n));
+  $$("#stepNavInner button").forEach((b,i)=>b.classList.toggle("on",i===n));
+  window.scrollTo({top:0,behavior:"smooth"});
+  markDone();
+}
+function markDone(){
+  const done=[
+    (S.strengths.length||S.values.length||S.hlDone),
+    S.transDone,
+    (S.rows.edu.length||S.rows.cert.length||S.rows.train.length||S.rows.emp.length||S.bankSkills.length),
+    (S.lgResult||S.lifeDone||S.finResult),
+    false
+  ];
+  $$("#stepNavInner button").forEach((b,i)=>{ if(i!==curStep) b.classList.toggle("done",!!done[i]); else b.classList.remove("done"); });
+}
+$$("#stepNavInner button").forEach(b=>b.onclick=()=>gotoStep(+b.dataset.step));
+$$("[data-goto]").forEach(b=>b.onclick=()=>gotoStep(+b.dataset.goto));
+
+/* ══════════════ STEP1: 강점 ══════════════ */
+(function initStrengths(){
+  const box=$("#strChips");
+  STRENGTHS.forEach(s=>{
+    const el=document.createElement("button");el.type="button";el.className="chip";el.textContent=s;
+    el.onclick=()=>{el.classList.toggle("on");
+      if(el.classList.contains("on"))S.strengths.push(s);else S.strengths=S.strengths.filter(x=>x!==s);
+      renderDiagSummary();};
+    box.appendChild(el);
+  });
+  $("#strEtc").oninput=e=>{S.strEtc=e.target.value;renderDiagSummary();};
+})();
+
+/* ══════════════ STEP1: 가치관 (선택 순서 = 우선순위) ══════════════ */
+(function initValues(){
+  const box=$("#valChips");
+  VALUES.forEach(([k,d])=>{
+    const el=document.createElement("button");el.type="button";el.className="chip valchip";
+    el.innerHTML=`${k}<small>${d}</small>`;
+    el.onclick=()=>{
+      const on=el.classList.toggle("on");
+      if(on)S.values.push(k);else S.values=S.values.filter(x=>x!==k);
+      // 선택 순서 배지 갱신
+      $$("#valChips .chip").forEach(c=>{const t=c.querySelector(".rankbadge");if(t)t.remove();});
+      S.values.forEach((v,i)=>{
+        const c=[...$$("#valChips .chip")].find(x=>x.firstChild.textContent===v);
+        if(c){const b=document.createElement("span");b.className="rankbadge";b.textContent=(i+1);c.querySelector("small").before(b);}
+      });
+      renderDiagSummary();
+    };
+    box.appendChild(el);
+  });
+})();
+
+/* ══════════════ STEP1: 홀랜드 진단 (전용 모달) ══════════════ */
+let hlIdx=0;
+function openHlModal(){$("#hlModal").classList.add("on");$("#hlModal").setAttribute("aria-hidden","false");document.body.style.overflow="hidden";$("#hlModal").scrollTop=0;}
+function closeHlModal(){$("#hlModal").classList.remove("on");$("#hlModal").setAttribute("aria-hidden","true");document.body.style.overflow="";}
+$("#hlStart").onclick=()=>{
+  openHlModal();
+  if(S.hlDone){$("#hlQuiz").style.display="none";$("#hlResult").style.display="block";}
+  else{hlIdx=0;S.hlAns={};$("#hlResult").style.display="none";$("#hlQuiz").style.display="block";renderHl();}
+};
+$("#hlClose").onclick=closeHlModal;
+$("#hlSaveBack").onclick=()=>{closeHlModal();renderHlCard();renderDiagSummary();markDone();toast("직업흥미 결과를 담았습니다");};
+$("#hlBack").onclick=()=>{if(hlIdx>0){hlIdx--;renderHl();}};
+$("#hlRedo").onclick=()=>{hlIdx=0;S.hlAns={};S.hlDone=false;$("#hlResult").style.display="none";$("#hlQuiz").style.display="block";renderHl();};
+function renderHlCard(){const box=$("#hlCardResult");if(!S.hlDone){box.innerHTML="";return;}
+  box.innerHTML=`<div class="box ok" style="margin-top:12px"><b>직업흥미 결과 담김</b> — 홀랜드 코드 <b>${S.hlCode}</b> (${T[S.hlCode[0]].name}·${T[S.hlCode[1]].name})<br><span style="font-size:12.5px;color:var(--sub)">대표유형: ${T[S.hlCode[0]].role}. '진단 시작하기'로 결과를 다시 볼 수 있습니다.</span></div>`;}
+$$("#hlQuiz .opt").forEach(o=>o.onclick=()=>{
+  S.hlAns[hlIdx]=+o.dataset.v;
+  $$("#hlQuiz .opt").forEach(x=>x.classList.remove("sel"));o.classList.add("sel");
+  setTimeout(()=>{if(hlIdx<HQ.length-1){hlIdx++;renderHl();}else finishHl();},170);
+});
+function renderHl(){
+  const q=HQ[hlIdx];
+  $("#hlQn").textContent="Q"+(hlIdx+1)+".";$("#hlQt").textContent=q[1];
+  $("#hlNum").textContent=hlIdx+1;$("#hlFill").style.width=(hlIdx/HQ.length*100)+"%";
+  $("#hlBack").disabled=hlIdx===0;
+  $$("#hlQuiz .opt").forEach(o=>o.classList.toggle("sel",S.hlAns[hlIdx]!==undefined&&+o.dataset.v===S.hlAns[hlIdx]));
+}
+function finishHl(){
+  const score={R:0,I:0,A:0,S:0,E:0,C:0};
+  HQ.forEach((q,i)=>{score[q[0]]+=(S.hlAns[i]||0);});
+  const max=20,sorted=Object.keys(score).sort((a,b)=>score[b]-score[a]),top2=sorted.slice(0,2),code=top2.join("");
+  S.hlScore=score;S.hlSorted=sorted;S.hlCode=code;S.hlDone=true;
+  $("#hlQuiz").style.display="none";$("#hlResult").style.display="block";
+  $("#hlCode").innerHTML=top2.map(k=>`<span style="color:var(--${k})">${k}</span>`).join("");
+  const bars=$("#hlBars");bars.innerHTML="";
+  sorted.forEach(k=>{const pct=Math.round(score[k]/max*100);
+    bars.insertAdjacentHTML("beforeend",`<div class="bar-row"><div class="bar-lab" style="color:var(--${k})">${k} ${T[k].name}</div><div class="bar-track"><div class="bar-val" style="background:var(--${k})" data-w="${pct}">${pct}%</div></div></div>`);});
+  setTimeout(()=>$$("#hlBars .bar-val").forEach(b=>b.style.width=b.dataset.w+"%"),60);
+  drawHex("#hlHex",score,max,true);
+  const ip=$("#hlInterp");ip.innerHTML="";
+  top2.forEach((k,i)=>{const t=T[k];
+    ip.insertAdjacentHTML("beforeend",`<div class="tblock" style="border-color:var(--${k})">
+      <span class="role" style="color:var(--${k})">${i===0?"★ 대표유형":"제2유형"} · ${t.role}</span>
+      <h4 style="color:var(--${k})">${k} ${t.name} (${t.eng})</h4><p>${t.desc}</p>
+      <div style="margin-top:6px;font-size:13.5px"><b>어울리는 일:</b> ${t.jobs.slice(0,6).join(", ")}</div></div>`);});
+  markDone();renderDiagSummary();renderHlCard();
+  $("#hlModal").scrollTop=0;
+}
+
+/* 육각형 레이더 */
+function drawHex(sel,score,max,animate){
+  const cx=150,cy=140,R=100,el=$(sel);if(!el)return;
+  const cs=getComputedStyle(document.documentElement);
+  const labs=["R 실재","I 탐구","A 예술","S 사회","E 진취","C 관습"];
+  const ang=i=>(-90+i*60)*Math.PI/180,pt=(i,r)=>[cx+Math.cos(ang(i))*r,cy+Math.sin(ang(i))*r];
+  const line=cs.getPropertyValue("--line").trim()||"#DCE5DE";
+  let svg="";
+  for(let g=1;g<=4;g++){const r=R*g/4,p=HEXORDER.map((_,i)=>pt(i,r).join(",")).join(" ");svg+=`<polygon points="${p}" fill="none" stroke="${line}" stroke-width="1"/>`;}
+  HEXORDER.forEach((_,i)=>{const[x,y]=pt(i,R);svg+=`<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="${line}" stroke-width="1"/>`;});
+  const dp=HEXORDER.map((k,i)=>pt(i,R*score[k]/max).join(",")).join(" ");
+  const fg=cs.getPropertyValue("--forest-2").trim()||"#2E6B4E";
+  svg+=`<polygon points="${dp}" fill="${fg}33" stroke="${fg}" stroke-width="2.5"/>`;
+  HEXORDER.forEach((k,i)=>{const[dx,dy]=pt(i,R*score[k]/max);const col=cs.getPropertyValue("--"+k).trim();
+    svg+=`<circle cx="${dx}" cy="${dy}" r="3.5" fill="${col}"/>`;
+    const[lx,ly]=pt(i,R+22);svg+=`<text x="${lx}" y="${ly}" font-size="12" font-weight="800" fill="${col}" text-anchor="middle" dominant-baseline="middle">${labs[i]}</text>`;});
+  el.innerHTML=svg;
+}
+
+/* 진단 요약 */
+function renderDiagSummary(){
+  const box=$("#diagSummary");
+  const st=[...S.strengths,...splitEtc(S.strEtc)];
+  if(!st.length&&!S.values.length&&!S.hlDone){box.innerHTML="";return;}
+  let h='<div class="box ok"><b>진단 요약</b> — 아래 결과가 직무번역·자기소개서에 반영됩니다.<br>';
+  if(st.length)h+=`<br>· <b>강점</b>: ${esc(st.join(" · "))}`;
+  if(S.values.length)h+=`<br>· <b>직업가치관(우선순위)</b>: ${esc(S.values.slice(0,3).join(" · "))}`;
+  if(S.hlDone)h+=`<br>· <b>직업흥미(홀랜드)</b>: ${S.hlCode} (${T[S.hlCode[0]].name}·${T[S.hlCode[1]].name})`;
+  h+="</div>";
+  // ── 나를 정리하는 문구 (가치관·강점) ──
+  if(S.values.length){
+    h+=`<div class="diagme">💚 나는 <b>${esc(S.values.slice(0,3).join(" · "))}</b>을(를) 소중히 여기며 일하는 사람입니다.</div>`;
+  }
+  if(st.length){
+    const hlWord=S.hlDone?` ${T[S.hlCode[0]].name}의 강점을 살려,`:"";
+    h+=`<div class="diagme">💪 나는 <b>${esc(st.slice(0,4).join(" · "))}</b>을(를) 강점으로,${hlWord} 맡은 일을 끝까지 책임지는 사람입니다.</div>`;
+  }
+  box.innerHTML=h;
+}
+
+/* ══════════════ STEP2: 직무 번역 ══════════════ */
+const industrySel=$("#industry"),roleBox=$("#roleChips");
+Object.entries(DATA).forEach(([k,v])=>{const o=document.createElement("option");o.value=k;o.textContent=v.label;industrySel.appendChild(o);});
+function renderRoles(){
+  const ind=DATA[industrySel.value];roleBox.innerHTML="";S.roles=[];
+  ind.roles.forEach((r,i)=>{
+    const el=document.createElement("button");el.type="button";el.className="chip";el.textContent=r.label;el.dataset.key=r.key;
+    el.onclick=()=>{el.classList.toggle("on");
+      if(el.classList.contains("on"))S.roles.push(r.key);else S.roles=S.roles.filter(x=>x!==r.key);};
+    if(i<2){el.classList.add("on");S.roles.push(r.key);}
+    roleBox.appendChild(el);
+  });
+}
+industrySel.onchange=()=>{S.industry=industrySel.value;renderRoles();};
+renderRoles();
+$("#years").oninput=e=>S.years=+e.target.value||1;
+$("#staff").oninput=e=>S.staff=+e.target.value||1;
+
+/* 자유서술 → 직무 찾기 (규칙기반, 같은 문장=같은 결과) */
+$("#freeText").oninput=e=>S.freeText=e.target.value;
+$("#freeScan").onclick=()=>{
+  const txt=(S.freeText||"").toLowerCase();
+  const found=[];const seen=new Set();
+  KWMAP.forEach(([kws,label,ncs])=>{
+    const hit=kws.find(k=>txt.includes(k.toLowerCase()));
+    if(hit&&!seen.has(label)){seen.add(label);found.push({label,hit,ncs});}
+  });
+  S.freeMatches=found;
+  const box=$("#freeResult");
+  if(!found.length){box.innerHTML='<div class="box warn" style="margin-top:10px">찾은 키워드가 없습니다. 한 일을 구체적으로 적어 보세요. (예: 청소, 직원 교육, 발주, 정산, 손님 응대, 배달, 홍보 등)</div>';return;}
+  let h='<div class="box ok" style="margin-top:10px"><b>문장에서 찾은 직무 '+found.length+'개</b> — \'번역하기\'를 누르면 아래 역량이 결과에 함께 반영됩니다.<div class="tags" style="margin-top:8px">';
+  found.forEach(f=>{h+=`<span class="tag" style="animation:none;opacity:1"><span class="srcdot" style="background:var(--clay)">자유서술</span>${esc(f.label)}${f.ncs?` <span style="font-size:11px;color:var(--sub)">→ ${esc(f.ncs.sub)} ${esc(f.ncs.code)}</span>`:""}</span>`;});
+  h+='</div></div>';box.innerHTML=h;
+  toast("직무 "+found.length+"개를 찾았습니다");
+};
+
+$("#run").onclick=translate;
+function translate(){
+  const ind=DATA[industrySel.value];
+  const years=Math.max(1,Math.min(50,+$("#years").value||1));
+  const staff=Math.max(1,Math.min(200,+$("#staff").value||1));
+  S.years=years;S.staff=staff;S.industry=industrySel.value;
+  const roleObjs=ind.roles.filter(r=>S.roles.includes(r.key));
+
+  // 출처 태그가 붙은 역량 수집
+  const cs=getComputedStyle(document.documentElement);
+  const skills=[];const push=(name,src,color)=>{if(!skills.find(s=>s.name===name))skills.push({name,src,color});};
+  ind.base.forEach(s=>push(s,"공통 경영",cs.getPropertyValue("--forest-2").trim()));
+  roleObjs.forEach(r=>r.skills.forEach(s=>push(s,r.label,cs.getPropertyValue("--gold").trim())));
+  S.freeMatches.forEach(f=>push(f.label,"자유서술",cs.getPropertyValue("--clay").trim()));
+  S.skills=skills;
+  S.best5=[null,null,null,null,null];
+  S.transDone=true;
+
+  renderTransResult(ind,years,staff,roleObjs);
+  markDone();
+}
+function renderTransResult(ind,years,staff,roleObjs){
+  const r=$("#transResult");
+  // NCS
+  let ncsHtml;
+  if(ind.noNcs){
+    ncsHtml=`<div class="box warn">이 업종은 <b>NCS 전용 세분류가 아직 없습니다</b>. 위 공통 직무역량으로 정리하세요. <span class="chk">확인</span></div>`;
+  } else {
+    ncsHtml=(ind.approxNote?`<div class="box info" style="margin-bottom:8px">🔎 <b>근사 매핑 안내</b> — ${ind.approxNote}</div>`:"")+
+    ind.ncs.map(f=>{
+      const c=(f.code||"").replace(/[^0-9]/g,"");
+      const train=HRD_SEARCH(f.sub);
+      const badge=f.approx?`<span class="chk" style="margin-left:6px">근사</span>`:"";
+      return `<div class="ncsCard"${f.approx?' style="border-style:dashed"':''}><div class="head"><span class="cat">${esc(f.cat)}</span><span class="sub">${esc(f.sub)}</span>${badge}${c?`<span class="ncscode">NCS ${esc(c)}</span>`:""}</div>
+        <div class="ncsUnits">${f.units.map(u=>`<span class="ncsUnit">${esc(u)}</span>`).join("")}</div>
+        <div class="ncsLinks"><a href="${NCS_SEARCH}" target="_blank" rel="noopener">🔎 NCS에서 보기</a><a href="${train}" target="_blank" rel="noopener">🎓 고용24 훈련과정</a></div></div>`;
+    }).join("");
+  }
+  r.innerHTML=`
+    <div class="beforeafter">
+      <div class="ba b"><div class="lab">전</div><div class="num">1</div><div class="cap">직무 키워드</div></div>
+      <div class="baArrow">→</div>
+      <div class="ba a"><div class="lab">후</div><div class="num">${S.skills.length}</div><div class="cap">직무역량</div></div>
+    </div>
+    <div style="margin-top:14px;font-size:13px;font-weight:800;color:var(--forest-2)">추출된 직무역량 <span style="font-weight:600;color:var(--sub)">(색 = 출처 영역)</span></div>
+    <div class="tags" id="skTags"></div>
+    <div style="margin-top:16px;font-size:13px;font-weight:800;color:var(--forest-2)">NCS 세분류 직무 연결 <span style="font-weight:600;color:var(--sub)">코드·링크 (길버트 검증)</span></div>
+    <div class="ncsWrap" style="margin-top:6px">${ncsHtml}</div>
+    <div style="margin-top:16px;font-size:13px;font-weight:800;color:var(--forest-2)">지원 가능 직무 · 전직 방향</div>
+    <div class="jobs" style="margin-top:6px">${ind.jobs.map(j=>`<span class="job">${esc(j)}</span>`).join("")}</div>
+
+    <div style="margin-top:18px;font-size:13px;font-weight:800;color:var(--forest-2)">⭐ 나의 베스트 5 직무 <span style="font-weight:600;color:var(--sub)">(중요한 순서대로)</span></div>
+    <p class="pickhint">아래 역량을 누르면 1→2→3→4→5 순위에 차례로 담깁니다. 순위 칸의 ✕로 비울 수 있습니다.</p>
+    <div class="best5" id="best5"></div>`;
+  // 태그 렌더 (클릭 시 베스트5에 담김)
+  const tg=$("#skTags");
+  S.skills.forEach((s,i)=>{
+    const el=document.createElement("span");el.className="tag rankable";el.style.animationDelay=(i*35)+"ms";
+    el.innerHTML=`<span class="srcdot" style="background:${s.color}">${esc(s.src)}</span>${esc(s.name)}`;
+    el.onclick=()=>addBest(s.name,el);el.dataset.name=s.name;
+    tg.appendChild(el);
+  });
+  renderBest5();
+}
+function addBest(name,el){
+  if(S.best5.includes(name))return;
+  const slot=S.best5.indexOf(null);
+  if(slot<0){toast("베스트5가 가득 찼습니다");return;}
+  S.best5[slot]=name;renderBest5();
+}
+function renderBest5(){
+  const box=$("#best5");if(!box)return;box.innerHTML="";
+  S.best5.forEach((name,i)=>{
+    const row=document.createElement("div");row.className="b5row"+(name?" filled":"");
+    row.innerHTML=`<div class="b5rank">${i+1}</div>`+
+      (name?`<div class="b5name">${esc(name)}</div><button class="b5clear">✕</button>`:`<div class="b5empty">비어 있음 — 위 역량을 눌러 채우세요</div>`);
+    if(name)row.querySelector(".b5clear").onclick=()=>{S.best5[i]=null;renderBest5();updateTagBadges();};
+    box.appendChild(row);
+  });
+  updateTagBadges();
+}
+function updateTagBadges(){
+  $$("#skTags .rankable").forEach(el=>{
+    const n=el.dataset.name,r=S.best5.indexOf(n);
+    const old=el.querySelector(".rankbadge");if(old)old.remove();
+    if(r>=0){const b=document.createElement("span");b.className="rankbadge";b.textContent=(r+1)+"순위";el.appendChild(b);}
+  });
+}
+
+/* ══════════════ STEP3: 정량 이력 ══════════════ */
+const ROWDEF={
+  edu:[["school","학교·과정","예) ○○고등학교 졸업"],["major","전공·계열","예) 인문계 / 조리과"],["date","졸업·수료","예) 2000.02"]],
+  cert:[["name","자격명","예) 지게차운전기능사"],["org","발급기관","예) 한국산업인력공단"],["date","취득일","예) 2023.11"]],
+  train:[["name","과정명","예) 요양보호사 양성과정"],["org","기관","예) ○○직업전문학교"],["period","기간","예) 2024.03~2024.06"],["hours","시간","예) 240시간"]],
+  emp:[["org","회사·상호","예) ○○산업(주) / ○○분식"],["period","기간","예) 2015.03~2021.08"],["role","직위·역할","예) 생산팀 반장 / 대표"],["task","한 일","예) 조립라인 12명 관리, 발주·정산"]]
+};
+function addRowUI(type,data){
+  const box=$("#rs_"+type);const idx=S.rows[type].length;
+  const rec=data||{};S.rows[type].push(rec);
+  const row=document.createElement("div");row.className="qrow";
+  ROWDEF[type].forEach(([k,lab,ph])=>{
+    const f=document.createElement("div");f.className="fld";
+    f.innerHTML=`<label>${lab}</label>`;
+    const inp=document.createElement("input");inp.type="text";inp.placeholder=ph;inp.value=rec[k]||"";
+    inp.oninput=()=>{rec[k]=inp.value;markDone();};
+    f.appendChild(inp);row.appendChild(f);
+  });
+  const del=document.createElement("button");del.className="del";del.textContent="삭제";
+  del.onclick=()=>{const i=S.rows[type].indexOf(rec);if(i>=0)S.rows[type].splice(i,1);row.remove();markDone();};
+  row.appendChild(del);box.appendChild(row);
+}
+$$("[data-add]").forEach(b=>b.onclick=()=>addRowUI(b.dataset.add));
+// 각 유형 1행 기본 제공
+["edu","cert","train","emp"].forEach(t=>addRowUI(t));
+
+(function initSkillChips(){
+  const box=$("#skillChips");
+  SKILLS.forEach(s=>{
+    const el=document.createElement("button");el.type="button";el.className="chip";el.textContent=s;
+    el.onclick=()=>{el.classList.toggle("on");
+      if(el.classList.contains("on"))S.bankSkills.push(s);else S.bankSkills=S.bankSkills.filter(x=>x!==s);markDone();};
+    box.appendChild(el);
+  });
+  $("#skillEtc").oninput=e=>{S.skillEtc=e.target.value;markDone();};
+})();
+
+/* ══════════════ 공통: 레이더(다각형) 차트 ══════════════ */
+function drawRadar(sel,vals,labels,max,colors){
+  const el=$(sel);if(!el)return;const n=vals.length,cx=160,cy=150,R=105;
+  const cs=getComputedStyle(document.documentElement);
+  const line=cs.getPropertyValue("--line").trim(),fg=cs.getPropertyValue("--forest-2").trim(),ink=cs.getPropertyValue("--ink").trim();
+  const ang=i=>(-90+i*360/n)*Math.PI/180,pt=(i,r)=>[cx+Math.cos(ang(i))*r,cy+Math.sin(ang(i))*r];
+  let svg="";
+  for(let g=1;g<=5;g++){const r=R*g/5;svg+=`<polygon points="${vals.map((_,i)=>pt(i,r).join(",")).join(" ")}" fill="none" stroke="${line}" stroke-width="1"/>`;}
+  vals.forEach((_,i)=>{const[x,y]=pt(i,R);svg+=`<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="${line}" stroke-width="1"/>`;});
+  const dp=vals.map((v,i)=>pt(i,R*v/max).join(",")).join(" ");
+  svg+=`<polygon points="${dp}" fill="${fg}30" stroke="${fg}" stroke-width="2.5"/>`;
+  vals.forEach((v,i)=>{const[dx,dy]=pt(i,R*v/max);const col=(colors&&colors[i])||fg;svg+=`<circle cx="${dx}" cy="${dy}" r="3.4" fill="${col}"/>`;
+    const[lx,ly]=pt(i,R+18);svg+=`<text x="${lx}" y="${ly}" font-size="10.5" font-weight="800" fill="${ink}" text-anchor="middle" dominant-baseline="middle">${labels[i]}</text>`;});
+  el.innerHTML=svg;
+}
+
+/* ══════════════ STEP4-A: 기대수명 진단 (생활습관·통계청 공개모형) ══════════════ */
+const LS_Q=[
+  {key:"smoke",label:"흡연 여부",opts:[["비흡연",2],["과거 흡연",0],["현재 흡연",-3.5]]},
+  {key:"drink",label:"음주 습관",opts:[["거의 안 함",1],["적당히",0],["잦은 편",-2]]},
+  {key:"exercise",label:"운동 빈도",opts:[["주 3회 이상",2.5],["주 1~2회",1],["거의 안 함",-2]]},
+  {key:"diet",label:"평소 식습관",opts:[["채소 위주·규칙적",2],["보통",0],["불규칙·패스트푸드",-2]]},
+  {key:"stress",label:"스트레스 관리",opts:[["잘 관리함",1.5],["보통",0],["자주 힘듦",-2]]},
+  {key:"sleep",label:"수면 습관",opts:[["규칙적 7~8시간",1.5],["보통",0],["불규칙·부족",-1.5]]}
+];
+const LS_ADVICE={흡연:"흡연은 수명을 크게 단축시킬 위험이 있습니다. 금연이 가장 큰 효과를 줍니다.",음주:"과도한 음주는 간·심혈관에 부담을 줍니다. 빈도와 양을 줄여 보세요.",운동:"운동은 심장 기능을 강화합니다. 주 3회 이상 규칙적으로 실천하세요.",식습관:"채소 섭취를 늘리고 규칙적으로 식사하면 노화를 늦춥니다.",스트레스:"스트레스는 세포 노화를 앞당깁니다. 나만의 회복 루틴을 만드세요.",수면:"규칙적인 수면 리듬으로 7~8시간을 확보하세요.",체중:"규칙적 운동·식이로 적정 체중을 유지하세요."};
+(function initLg(){
+  const box=$("#lgFactors");
+  LS_Q.forEach(f=>{
+    const wrap=document.createElement("div");wrap.style.marginTop="12px";
+    wrap.innerHTML=`<label class="f" style="margin-bottom:6px">${f.label}</label>`;
+    const chips=document.createElement("div");chips.className="chips";
+    f.opts.forEach(([lab,val],i)=>{
+      const el=document.createElement("button");el.type="button";el.className="chip";el.textContent=lab;
+      el.onclick=()=>{[...chips.children].forEach(c=>c.classList.remove("on"));el.classList.add("on");S.lg[f.key]=val;};
+      if(i===1){el.classList.add("on");S.lg[f.key]=val;}
+      chips.appendChild(el);
+    });
+    wrap.appendChild(chips);box.appendChild(wrap);
+  });
+})();
+$("#lgRun").onclick=()=>{
+  const age=Math.max(20,Math.min(95,+$("#lgAge").value||55));
+  const sex=$("#lgSex").value,h=+$("#lgH").value||0,w=+$("#lgW").value||0;
+  let base=sex==="f"?87:81,adj=0;const factors=[];
+  let bmi=0,bmiAdj=0;
+  if(h>0&&w>0){ bmi=w/Math.pow(h/100,2);
+    if(bmi<18.5){bmiAdj=-1;factors.push(["체중(저체중)","-1.0년",bmiAdj]);}
+    else if(bmi<23){bmiAdj=1;factors.push(["체중(정상 BMI)","+1.0년",bmiAdj]);}
+    else if(bmi<25){bmiAdj=0;factors.push(["체중(과체중 경계)","0년",bmiAdj]);}
+    else if(bmi<30){bmiAdj=-1.5;factors.push(["체중(과체중)","-1.5년",bmiAdj]);}
+    else {bmiAdj=-3;factors.push(["체중(비만)","-3.0년",bmiAdj]);}
+  }
+  const map={smoke:"흡연",drink:"음주",exercise:"운동",diet:"식습관",stress:"스트레스",sleep:"수면"};
+  LS_Q.forEach(f=>{const v=S.lg[f.key]||0;adj+=v;factors.push([map[f.key],(v>0?"+":"")+v.toFixed(1)+"년",v]);});
+  adj+=bmiAdj;
+  let est=Math.max(age+1,Math.round((base+adj)*10)/10);
+  const remain=Math.max(0,Math.round(est-age));
+  S.lgResult={est,age,remain,base,adj,bmi};
+  $("#finLife").value=Math.round(est); $("#finAge").value=age;
+  const worst=[["흡연",S.lg.smoke],["음주",S.lg.drink],["운동",S.lg.exercise],["식습관",S.lg.diet],["스트레스",S.lg.stress],["수면",S.lg.sleep],["체중",bmiAdj]].filter(x=>x[1]<0).sort((a,b)=>a[1]-b[1])[0];
+  let out=`<div class="box ok"><b>예상 기대수명 약 ${est}세</b> · 앞으로 약 <b>${remain}년</b> <span class="chk">확인 · 교육용 추정</span>`;
+  out+=`<br><span style="font-size:12.5px;color:var(--sub)">기준(통계청 평균) ${base}세 · 생활습관 조정 ${adj>=0?"+":""}${adj.toFixed(1)}세${bmi?` · BMI ${bmi.toFixed(1)}`:""}</span>`;
+  out+=`<div style="margin-top:8px">${factors.map(f=>`<span class="ncsUnit" style="margin:2px;color:${f[2]<0?'var(--danger)':(f[2]>0?'var(--forest-2)':'var(--sub)')}">${f[0]} ${f[1]}</span>`).join("")}</div>`;
+  if(worst)out+=`<br>🌱 <b>가장 큰 개선 포인트 · ${worst[0]}</b> — ${LS_ADVICE[worst[0]]||""}`;
+  else out+=`<br>🌱 생활습관이 전반적으로 건강합니다. 지금 루틴을 유지하세요.`;
+  out+=`<br><span style="font-size:12px;color:var(--sub)">유전·만성질환은 미반영. 노후자금 계산기 기대수명에 자동 반영됩니다.</span></div>`;
+  $("#lgResult").innerHTML=out;markDone();toast("기대수명이 노후자금 계산기에 반영되었습니다");
+};
+
+/* ══════════════ STEP4-B: 생애균형 휠 (8영역·22문항, 자체 문항) ══════════════ */
+const LB=[
+ {key:"건강",color:"#10b981",qs:["규칙적인 운동을 주 3회 이상 실천하고 있습니까?","균형 잡힌 식단과 충분한 수면(7~8시간)을 취하고 있습니까?"],
+  fb:{hi:"기본 체력 관리가 잘 잡혀 있습니다. 지금 루틴을 유지하세요.",mid:"운동·식단·수면 중 하나만 골라 이번 주부터 작게 시작해 보세요.",lo:"주 1회 15분 걷기처럼 부담 없는 활동과 규칙적 수면부터 만드세요."}},
+ {key:"재무",color:"#2563eb",qs:["현재의 수입과 지출을 체계적으로 기록·관리하고 있습니까?","자산 증식을 위한 저축·투자 계획을 세우고 실천합니까?","노후 자금이나 예기치 못한 상황을 대비한 비상금을 마련하고 있습니까?"],
+  fb:{hi:"재무 관리 습관이 안정적입니다. 노후자금 계산기로 장기 계획도 점검해 보세요.",mid:"소득의 일부라도 자동 저축을 걸어 두면 실천이 훨씬 쉬워집니다.",lo:"먼저 한 달 수입·지출을 기록하는 것부터 시작하세요."}},
+ {key:"가족관계",color:"#f43f5e",qs:["가족의 중요한 일정·감정 상태를 잘 알고 지지해 주고 있습니까?","가족 내 자신의 역할(책임·배려)에 충실하며 유대감을 느낍니까?"],
+  fb:{hi:"가족과의 유대가 단단합니다. 이 안정감이 다른 영역의 기반이 됩니다.",mid:"일주일에 한 번, 가족과 방해 없이 대화하는 시간을 정해 보세요.",lo:"가족 한 명의 최근 관심사를 물어보는 짧은 대화부터 시작하세요."}},
+ {key:"사회적관계",color:"#14b8a6",qs:["직장·지역·동호회 등에서 사람들과 원만한 관계를 맺고 있습니까?","어려울 때 속마음을 털어놓고 도움을 청할 지인이 있습니까?","관계에서 생기는 갈등·오해를 대화로 원만히 풀어나갑니까?"],
+  fb:{hi:"신뢰할 관계망을 잘 갖추고 있습니다. 핵심 관계에 집중해 깊이를 더하세요.",mid:"넓은 인맥보다 속마음을 나눌 2~3명의 관계에 집중해 보세요.",lo:"신뢰할 수 있는 1명에게 먼저 안부를 건네는 작은 시도부터 하세요."}},
+ {key:"여가",color:"#f59e0b",qs:["업무·학업 외의 충분한 휴식으로 에너지를 잘 재충전합니까?","스트레스를 건강하게 푸는 나만의 취미 활동이 있습니까?","일과 삶의 균형(워라밸)을 유지하며 개인 시간을 확보합니까?"],
+  fb:{hi:"재충전 루틴이 잘 자리 잡혀 있습니다. 가끔 새 경험으로 영감을 더해 보세요.",mid:"주말 반나절은 온전히 나를 위한 재충전 시간으로 비워 두세요.",lo:"하루 15분이라도 좋아하는 활동으로 회복 루틴을 만드세요."}},
+ {key:"경력",color:"#0d9488",qs:["지금 하는 일·학업에서 충분한 보람과 성취감을 느낍니까?","역량 강화를 위해 꾸준히 학습하거나 자기계발을 합니까?","5년 후의 커리어 목표·비전이 뚜렷하게 설정돼 있습니까?"],
+  fb:{hi:"성장 방향이 뚜렷합니다. 어디서든 쓰이는 역량을 고도화하세요.",mid:"주 1회, 관심 분야를 짧게 학습하는 시간을 고정해 보세요.",lo:"‘5년 후 되고 싶은 모습’을 한 줄로 적는 것부터 시작하세요."}},
+ {key:"사회공헌",color:"#059669",qs:["지식·시간·재능을 활용해 타인이나 사회에 도움을 주고 있습니까?","정기적 기부·봉사 등으로 나눔의 가치를 실천합니까?","환경·소외계층 등 사회 이슈에 관심을 갖고 참여합니까?"],
+  fb:{hi:"나눔의 가치를 실천하고 있습니다. 전문성 기반 나눔으로 넓혀 보세요.",mid:"관심 있는 사회 이슈 하나를 정해 소액 정기기부부터 시작하세요.",lo:"가진 재능을 나눌 작은 자리를 찾아보는 것부터 시작하세요."}},
+ {key:"마음건강",color:"#8b5cf6",qs:["자신을 긍정적으로 보고 장단점을 있는 그대로 수용합니까?","현재 삶에 대한 전반적 만족도·감사함이 높은 편입니까?","스트레스 상황에서도 정서적 안정을 빠르게 되찾습니까?"],
+  fb:{hi:"정서적 회복 탄력성이 좋습니다. 하루 3분 감사 일기로 지켜 보세요.",mid:"하루를 마치며 잘한 일 한 가지를 적는 회복 루틴을 만들어 보세요.",lo:"감정을 건강하게 표출할 창구(대화·기록·산책)를 하나 마련하세요."}}
+];
+let LBQ=[];LB.forEach((a,ai)=>a.qs.forEach(q=>LBQ.push({ai,q})));
+S.lbAns=new Array(LBQ.length).fill(null);
+$("#lbStart").onclick=()=>{$("#lbIntro").style.display="none";renderLbQuiz();};
+function renderLbQuiz(){
+  const box=$("#lbQuiz");box.style.display="block";let h="";let cur=-1;
+  LBQ.forEach((item,idx)=>{
+    if(item.ai!==cur){cur=item.ai;h+=`<div style="margin-top:14px;font-weight:800;color:${LB[cur].color};font-size:13.5px">${LB[cur].key}</div>`;}
+    h+=`<div class="lbq" data-idx="${idx}"><div class="lbqt">${esc(item.q)}</div><div class="seg5">`+
+       ["전혀","아니다","보통","그렇다","매우"].map((t,v)=>`<button type="button" data-v="${v+1}">${t}</button>`).join("")+`</div></div>`;
+  });
+  h+=`<button class="btn" id="lbCalc" style="margin-top:16px">📊 결과 보기 (레이더·부족영역)</button>`;
+  box.innerHTML=h;
+  box.querySelectorAll(".lbq").forEach(row=>{const idx=+row.dataset.idx;
+    row.querySelectorAll("button").forEach(b=>b.onclick=()=>{row.querySelectorAll("button").forEach(x=>x.classList.remove("on"));b.classList.add("on");S.lbAns[idx]=+b.dataset.v;});});
+  $("#lbCalc").onclick=calcLb;
+}
+function calcLb(){
+  const un=S.lbAns.filter(a=>a===null).length;
+  if(un>0)toast(un+"개 문항이 비어 있어 보통(3점)으로 계산합니다");
+  const sum=LB.map(()=>({s:0,n:0}));
+  LBQ.forEach((item,idx)=>{const v=S.lbAns[idx]||3;sum[item.ai].s+=v;sum[item.ai].n++;});
+  const pct=LB.map((a,i)=>Math.round(sum[i].s/sum[i].n/5*100));
+  S.lifeBalance=pct;S.lifeDone=true;
+  const res=$("#lbResult");res.style.display="block";
+  res.innerHTML=`<div style="text-align:center;margin-top:6px"><svg id="lbHex" viewBox="0 0 320 300" width="100%" style="max-width:340px"></svg></div><div id="lbBars"></div><div id="lbReport"></div>`;
+  drawRadar("#lbHex",pct,LB.map(a=>a.key),100,LB.map(a=>a.color));
+  let bars="";LB.map((a,i)=>({a,pct:pct[i]})).sort((x,y)=>y.pct-x.pct).forEach(o=>{
+    bars+=`<div class="bar-row"><div class="bar-lab" style="color:${o.a.color}">${o.a.key}</div><div class="bar-track"><div class="bar-val" style="background:${o.a.color};width:${o.pct}%">${o.pct}</div></div></div>`;});
+  $("#lbBars").innerHTML=bars;
+  const ranked=LB.map((a,i)=>({a,pct:pct[i]})).sort((x,y)=>x.pct-y.pct);
+  const best=ranked[ranked.length-1],worst=ranked[0];
+  const weak=ranked.filter(o=>o.pct<60);
+  let rep=`<div class="box ${weak.length?'warn':'ok'}" style="margin-top:12px"><b>부족 영역·개선사항 보고서</b><br>가장 강한 영역: <b>${best.a.key}(${best.pct}점)</b> · 우선 돌봄 필요: <b>${worst.a.key}(${worst.pct}점)</b>`;
+  (weak.length?weak:[worst]).forEach(o=>{const lvl=o.pct>=70?'hi':o.pct>=40?'mid':'lo';rep+=`<br><br>· <b>${o.a.key} (${o.pct}점)</b> — ${o.a.fb[lvl]}`;});
+  rep+=`<br><br><span style="font-size:12.5px;color:var(--sub)">60점 미만 영역을 먼저 챙기세요. 균형이 무너진 곳이 지금의 스트레스 원인일 수 있습니다. 자기이해용 참고 도구입니다.</span></div>`;
+  $("#lbReport").innerHTML=rep;markDone();
+}
+
+/* ══════════════ STEP4-C: 노후자금 계산기 (국민연금·공공 재무모형) ══════════════ */
+$("#finRun").onclick=()=>{
+  const num=id=>+$("#"+id).value||0;
+  const age=num("finAge"),ret=num("finRetire"),life=num("finLife");
+  const expense=num("finSpend"),asset=num("finAsset"),save=num("finSave");
+  const ror=num("finRor")/100,infl=num("finInfl")/100,np=num("finPension");
+  const home=num("finHome"),homeAge=num("finHomeAge");
+  if(ret<=age){toast("은퇴 나이는 현재 나이보다 커야 합니다");return;}
+  if(life<=ret){toast("기대수명은 은퇴 나이보다 커야 합니다");return;}
+  const yToRet=ret-age,yRetire=life-ret;
+  const realR=(1+ror)/(1+infl)-1;
+  const fvAsset=asset*Math.pow(1+realR,yToRet);
+  const fvSave=Math.abs(realR)<1e-6?save*12*yToRet:save*12*(Math.pow(1+realR,yToRet)-1)/realR;
+  const prepared=fvAsset+fvSave;
+  let homePension=0,homeMonthly=0;
+  if(home>0){const hy=Math.max(1,life-homeAge);homeMonthly=home/(hy*12)*0.7;const overlapY=Math.max(0,life-Math.max(homeAge,ret));homePension=homeMonthly*12*overlapY;}
+  const npTotal=np*12*yRetire,needTotal=expense*12*yRetire;
+  const totalResource=prepared+npTotal+homePension,gap=totalResource-needTotal;
+  const readiness=Math.min(999,Math.round(totalResource/needTotal*100));
+  let addMonthly=0;
+  if(gap<0){const factor=Math.abs(realR)<1e-6?12*yToRet:12*(Math.pow(1+realR,yToRet)-1)/realR;addMonthly=(-gap)/factor;}
+  const ok=gap>=0,lv=readiness>=100?"안정":readiness>=80?"양호":readiness>=60?"주의":"부족";
+  S.finResult={readiness,gap,ok,prepared,needTotal,npTotal,addMonthly};
+  const won=n=>Math.round(n).toLocaleString("ko-KR");
+  const eok=n=>{const man=Math.round(n);return man>=10000?(man/10000).toFixed(1)+"억원":won(man)+"만원";};
+  let h=`<div class="box ${ok?'ok':'warn'}" style="margin-top:12px"><b>노후 준비율 ${readiness}% · ${lv}</b><br>${ok?"현재 계획대로면 노후 자금에 여유가 있습니다 ✓":"현재 계획대로면 노후 자금이 부족할 수 있습니다"}`;
+  h+=`<br><br>· 예상 준비자금: <b>${eok(prepared)}</b>`;
+  h+=`<br>· 필요 노후자금: <b>${eok(needTotal)}</b> (은퇴 후 ${yRetire}년)`;
+  h+=`<br>· 국민연금 합계: ${eok(npTotal)}${home>0?` · 주택연금 환산: ${eok(homePension)}(월 약 ${won(homeMonthly)}만원)`:""}`;
+  h+=`<br>· <b>${ok?"여유":"부족"} 금액: ${eok(Math.abs(gap))}</b>`;
+  if(!ok)h+=`<br>· 은퇴까지 권장 추가 월 저축: 약 <b>${won(addMonthly)}만원</b>`;
+  h+=`<br><span style="font-size:12px;color:var(--sub)">실질수익률=(1+수익률)/(1+물가)−1로 물가 반영. 은퇴까지 ${yToRet}년 적립 → ${yRetire}년 인출 가정. 특정 상품 권유 아님. <span class="chk">확인</span></span></div>`;
+  h+='<div class="box info" style="margin-top:10px"><b>도움받을 곳 (혼자 고민 말고 문의)</b>';
+  FIN_ORGS.forEach(([n,t,d,u])=>{const link=u?` <a href="${u}" target="_blank" rel="noopener">${u.replace(/^https?:\/\//,"")} ↗</a>`:"";h+=`<br>· <b>${n}</b> ${t?t:""}${link} — ${d}`;});
+  h+='<br><br>재취업기 제도: <b>실업급여</b>(고용보험 가입·비자발 퇴사) · <b>국민내일배움카드</b>(5년 300~500만원, 훈련비 45~85% 지원) · <b>기초연금</b>(65세·소득 하위 70%, 2026년 월 최대 349,700원) <span class="chk">확인</span></div>';
+  $("#finResult").innerHTML=h;markDone();
+};
+
+/* ══════════════ STEP5: 서류 워크스페이스 (선행자료 자동초안 → 편집 → 미리보기/인쇄/PDF) ══════════════ */
+function copyText(text){
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(()=>toast("복사되었습니다")).catch(()=>fb(text));}
+  else fb(text);
+  function fb(t){const ta=document.createElement("textarea");ta.value=t;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.focus();ta.select();try{document.execCommand("copy");toast("복사되었습니다");}catch(e){toast("길게 눌러 복사하세요");}document.body.removeChild(ta);}
+}
+function allSkills(){
+  const set=[];
+  S.best5.filter(Boolean).forEach(s=>{if(!set.includes(s))set.push(s);});
+  S.skills.forEach(s=>{if(!set.includes(s.name))set.push(s.name);});
+  S.bankSkills.forEach(s=>{if(!set.includes(s))set.push(s);});
+  splitEtc(S.skillEtc).forEach(s=>{if(!set.includes(s))set.push(s);});
+  return set;
+}
+function rowsTxt(type){return S.rows[type].filter(r=>Object.values(r).some(v=>v&&v.trim()));}
+
+/* 선행자료 → 서류별 초안 텍스트 (편집 가능) */
+function genResume(){
+  const edu=rowsTxt("edu"),cert=rowsTxt("cert"),train=rowsTxt("train"),emp=rowsTxt("emp");
+  const skills=allSkills(),strengths=[...S.strengths,...splitEtc(S.strEtc)];
+  const L=[];L.push("■ 인적사항\n성명: [직접 기입]   연락처: [직접 기입]\n(※ 이 앱은 실명·연락처를 저장하지 않습니다. 사진은 왼쪽에 배치됩니다.)");
+  L.push("■ 학력\n"+(edu.length?edu.map(r=>`- ${[r.school,r.major,r.date].filter(Boolean).join(" / ")}`).join("\n"):"- [STEP3에서 학력을 입력하세요]"));
+  L.push("■ 자격증\n"+(cert.length?cert.map(r=>`- ${[r.name,r.org,r.date].filter(Boolean).join(" / ")}`).join("\n"):"- [STEP3에서 자격증을 입력하세요]"));
+  L.push("■ 교육·직업훈련\n"+(train.length?train.map(r=>`- ${[r.name,r.org,r.period,r.hours].filter(Boolean).join(" / ")}`).join("\n"):"- [STEP3에서 훈련 이력을 입력하세요]"));
+  L.push("■ 경력 (고용보험 가입이력·사업 운영)\n"+(emp.length?emp.map(r=>`- ${[r.org,r.period,r.role].filter(Boolean).join(" / ")}${r.task?" — "+r.task:""}`).join("\n"):"- [STEP3에서 경력을 입력하세요]"));
+  if(skills.length)L.push("■ 보유 직무능력·기술\n"+skills.join(", "));
+  if(strengths.length)L.push("■ 강점\n"+strengths.join(", "));
+  if(S.hlDone)L.push("■ 직업흥미(홀랜드)\n"+S.hlCode+" · "+T[S.hlCode[0]].name+"/"+T[S.hlCode[1]].name);
+  if(S.values.length)L.push("■ 직업가치관\n"+S.values.slice(0,3).join(", "));
+  return L.join("\n\n");
+}
+function genCareer(){
+  const ind=DATA[S.industry],best=S.best5.filter(Boolean),emp=rowsTxt("emp");
+  const roleObjs=ind.roles.filter(r=>S.roles.includes(r.key));
+  const b=[];
+  b.push(`${ind.label} 사업장/직무를 ${S.years}년간 수행하며 매출·손익 등 운영 전반을 총괄`);
+  b.push(S.staff>=2?`${S.staff}명 규모 인력을 운영하며 채용·교육·근태를 관리`:`1인 사업장을 전 과정 독립 운영`);
+  roleObjs.forEach(r=>b.push(`${r.label}: ${r.skills.join(", ")}`));
+  if(best.length)b.push(`핵심(베스트5) 직무역량: ${best.join(" › ")}`);
+  emp.forEach(e=>{if(e.org||e.task)b.push(`[경력] ${[e.org,e.period,e.role].filter(Boolean).join(" · ")}${e.task?" — "+e.task:""}`);});
+  let t="■ 경력 요약 및 담당 업무\n"+b.map(x=>"• "+x).join("\n");
+  t+="\n\n■ 주요 성과 (수치화 권장)\n• [예: 매출 ○○% 향상 / 불량률 ○○%→○○% / 고객 ○○명 관리]";
+  if(!ind.noNcs&&ind.ncs.length)t+="\n\n■ 관련 NCS 세분류\n"+ind.ncs.map(f=>`· [${f.cat}] ${f.sub} (NCS ${f.code}) — ${f.units.join(", ")}`).join("\n");
+  return t;
+}
+function genCover(){
+  const ind=DATA[S.industry],strengths=[...S.strengths,...splitEtc(S.strEtc)],skills=allSkills(),best=S.best5.filter(Boolean);
+  const roleObjs=ind.roles.filter(r=>S.roles.includes(r.key));
+  const roleNames=roleObjs.length?roleObjs.map(r=>r.label).join("·"):"운영 전반";
+  const introSkills=(best.length?best:skills).slice(0,5).join(", ");
+  const vals=S.values.slice(0,3), valTxt=vals.join("·"), strTop=strengths.slice(0,3);
+  const A=S.hlDone?T[S.hlCode[0]]:null, B=S.hlDone?T[S.hlCode[1]]:null;
+  const hlName=A?`${A.name}·${B.name}`:"";
+  // 1. 성장과정·강점 — 강점 키워드 + 홀랜드 주요 강점영역을 자연스럽게
+  let p1=`저는 ${ind.label} 분야에서 ${S.years}년간 ${roleNames}을(를) 직접 도맡아 온 사람입니다. `;
+  if(strTop.length)p1+=`주변에서 자주 들어 온 제 강점은 ${strTop.join(", ")}이며, 이 태도로 하루하루의 일을 끝까지 책임져 왔습니다. `;
+  if(A)p1+=`직업흥미 진단에서도 ${hlName} 성향이 뚜렷하게 나타났는데, 이는 제가 ‘${A.role}’에 특히 힘을 내는 사람이라는 것을 말해 줍니다.`;
+  // 2. 직무 전문성·지원 동기
+  let p2=`현장에서 몸으로 익힌 ${introSkills} 등의 실무 역량은 `+(ind.noNcs?`지원 직무 현장에 곧바로 적용할 수 있는 강점입니다. `:`NCS 기준 ${ind.ncs.map(f=>f.sub).join("·")} 직무로 그대로 이어집니다. `);
+  if(best.length)p2+=`그중에서도 제가 가장 자신 있는 일은 ${best[0]}${best[1]?", "+best[1]:""}이며, 말보다 결과로 증명해 온 부분입니다.`;
+  // 3. 성과 경험
+  let p3=(S.staff>=2?`${S.staff}명의 인력을 직접 채용·교육·관리하며 작은 조직을 이끌어 본 경험이 있습니다. `:`혼자 또는 소수의 인원으로 모든 과정을 책임져 왔습니다. `)+`한정된 자원 안에서 매출·고객·품질을 스스로 챙겨 온 경험은, 어떤 조직에서든 입사 즉시 성과로 이어질 수 있는 저의 가장 큰 자산입니다.`;
+  // 4. 입사 후 포부 — 직업가치(우선순위)를 동기로, 홀랜드 강점으로 마무리
+  let p4="";
+  if(valTxt)p4+=`저는 일을 할 때 ${valTxt}을(를) 가장 소중하게 여기며 일해 온 사람입니다. `;
+  p4+=(A?`${hlName}의 강점이 잘 발휘되는 자리에서 `:`제 경험이 필요한 자리에서 `)+`이 가치를 지키며 오래 기여하고 싶습니다. 성실함으로 신뢰를 쌓아 온 만큼, 맡겨 주신 일은 끝까지 책임지고 해내겠습니다.`;
+  return `1. 성장과정 · 나의 강점\n${p1}\n\n2. 직무 전문성 (지원 동기)\n${p2}\n\n3. 성과 경험\n${p3}\n\n4. 입사 후 포부\n${p4}`;
+}
+function genDoc(type){return type==="resume"?genResume():type==="career"?genCareer():genCover();}
+
+/* 워크스페이스 */
+const DOCMETA={resume:{title:"이력서",rvkey:"이력서"},cover:{title:"자기소개서",rvkey:"자기소개서"},career:{title:"경력기술서",rvkey:"경력기술서"}};
+let curDoc="resume";
+S.docText={resume:"",cover:"",career:""};
+function switchDoc(type){
+  curDoc=type;
+  $$("#docTabs button").forEach(b=>b.classList.toggle("on",b.dataset.doc===type));
+  $("#docTitle").innerHTML=`<span class="cnum">✍</span> ${DOCMETA[type].title} 작성`;
+  $("#docEdit").value=S.docText[type]||"";
+  $("#docPreviewArea").innerHTML="";$("#docCheckArea").innerHTML="";
+}
+$$("#docTabs button").forEach(b=>b.onclick=()=>{S.docText[curDoc]=$("#docEdit").value;switchDoc(b.dataset.doc);});
+$("#docEdit").oninput=()=>{S.docText[curDoc]=$("#docEdit").value;};
+$("#genDraft").onclick=()=>{const t=genDoc(curDoc);S.docText[curDoc]=t;$("#docEdit").value=t;toast("선행자료로 초안을 만들었습니다");markDone();};
+$("#blankDraft").onclick=()=>{const t=FORMS[curDoc];S.docText[curDoc]=t;$("#docEdit").value=t;toast("빈 양식을 불러왔습니다");};
+$("#pastFile").onchange=e=>{const f=e.target.files&&e.target.files[0];if(!f)return;
+  const r=new FileReader();r.onload=()=>{$("#pastDoc").value=r.result;toast(".txt 내용을 불러왔습니다");};r.readAsText(f,"utf-8");};
+$("#mergeDraft").onclick=()=>{
+  const past=($("#pastDoc").value||"").trim();
+  if(!past){toast("합칠 과거 서류 내용을 먼저 붙여넣으세요");return;}
+  const merged=genDoc(curDoc)+"\n\n──────────\n[내가 예전에 쓴 내용 — 검토·반영]\n"+past;
+  S.docText[curDoc]=merged;$("#docEdit").value=merged;runCheck();toast("선행자료와 합쳐 통합 초안을 만들었습니다");
+};
+$("#docPreview").onclick=()=>{S.docText[curDoc]=$("#docEdit").value;$("#docPreviewArea").innerHTML=previewHtml(curDoc,$("#docEdit").value);};
+$("#docCopy").onclick=()=>{if(!$("#docEdit").value.trim()){toast("먼저 초안을 만들거나 입력하세요");return;}copyText($("#docEdit").value);};
+$("#docCheck").onclick=runCheck;
+$("#docPrompt").onclick=()=>{const target=(S.transDone?DATA[S.industry].jobs[0]:"희망 직무");copyText(aiPrompt(DOCMETA[curDoc].rvkey,target,$("#docEdit").value.trim()));};
+$("#docPrint").onclick=()=>printDoc(false);
+$("#docPdf").onclick=()=>printDoc(true);
+function previewHtml(type,text){
+  const safe=esc(text||"(내용이 비어 있습니다. ‘초안 자동생성’을 눌러 보세요.)");
+  if(type==="resume"){
+    const photo=S.photo?`<img class="rez-photo" src="${S.photo}" alt="증명사진">`:`<div class="rez-photo empty">증명사진<br>(STEP3)</div>`;
+    return `<div class="docprev"><div class="rez-top">${photo}<div style="flex:1"><h4 class="dt">이력서</h4><pre>${safe}</pre></div></div></div>`;
+  }
+  return `<div class="docprev"><h4 class="dt">${DOCMETA[type].title}</h4><pre>${safe}</pre></div>`;
+}
+function printDoc(pdf){
+  S.docText[curDoc]=$("#docEdit").value;
+  if(!$("#docEdit").value.trim()){toast("먼저 초안을 만들거나 입력하세요");return;}
+  const w=window.open("","_blank");if(!w){toast("팝업이 차단되었습니다. 브라우저에서 허용하세요");return;}
+  const photo=(curDoc==="resume"&&S.photo)?`<img src="${S.photo}" style="width:96px;height:120px;object-fit:cover;border:1px solid #999;float:left;margin:2px 14px 6px 0">`:"";
+  w.document.write(`<html><head><meta charset="utf-8"><title>${DOCMETA[curDoc].title}</title>
+    <style>body{font-family:'Malgun Gothic',sans-serif;font-size:13px;line-height:1.85;padding:28px;color:#111}
+    h1{font-size:20px;border-bottom:2px solid #1F4A35;padding-bottom:8px;color:#1F4A35}
+    pre{white-space:pre-wrap;font-family:inherit;font-size:13px;margin:0}</style></head>
+    <body><h1>${DOCMETA[curDoc].title}</h1>${photo}<pre>${esc($("#docEdit").value)}</pre></body></html>`);
+  w.document.close();w.focus();
+  if(pdf)toast("인쇄 대화상자에서 ‘PDF로 저장’을 선택하세요");
+  setTimeout(()=>{try{w.print();}catch(e){}},350);
+}
+function runCheck(){
+  const type=DOCMETA[curDoc].rvkey,txt=($("#docEdit").value||"").trim();
+  const box=$("#docCheckArea");
+  if(txt.length<20){box.innerHTML='<div class="box warn" style="margin-top:12px">내용을 20자 이상 입력한 뒤 점검하세요.</div>';return;}
+  const cfg=REVIEW[type],items=[];const len=txt.replace(/\s/g,"").length;
+  if(len<cfg.min)items.push(["no","분량 부족",`현재 약 ${len}자. ${type}는 ${cfg.min}~${cfg.max}자 권장 — 경험·성과를 더 채워 보세요.`]);
+  else if(len>cfg.max)items.push(["warn","분량 많음",`현재 약 ${len}자. ${cfg.max}자 이하로 핵심만 간결히 다듬어 보세요.`]);
+  else items.push(["ok","분량 적절",`약 ${len}자 — 권장 범위(${cfg.min}~${cfg.max}자) 안입니다.`]);
+  cfg.must.forEach(([label,re])=>{if(re.test(txt))items.push(["ok",`'${label}' 포함`,"관련 내용이 있습니다."]);else items.push(["no",`'${label}' 안 보임`,`${label} 관련 내용을 추가하면 좋습니다.`]);});
+  const nums=(txt.match(/\d+/g)||[]).length;
+  if(nums>=3)items.push(["ok","수치화 좋음",`숫자가 ${nums}곳 — 성과가 구체적입니다.`]);
+  else items.push(["warn","수치화 부족",`숫자가 ${nums}곳뿐입니다. 기간·인원·매출·비율을 숫자로 보여 주세요.`]);
+  const found=VAGUE.filter(w=>txt.includes(w));
+  if(found.length)items.push(["warn","모호한 표현",`'${found.join(", ")}' 같은 두루뭉술한 말은 구체 사례·수치로 바꾸면 설득력이 큽니다.`]);
+  else items.push(["ok","표현 구체적","막연한 상투어가 눈에 띄지 않습니다."]);
+  const okN=items.filter(i=>i[0]==="ok").length;
+  let h=`<div class="box ${okN>=items.length-1?"ok":"warn"}" style="margin-top:12px"><b>점검 결과 — ${okN}/${items.length} 통과</b></div><div style="margin-top:6px">`;
+  items.forEach(([m,t,tip])=>{h+=`<div class="rvitem"><span class="rvmark ${m}">${m==="ok"?"✓":m==="no"?"!":"△"}</span><div class="rvt"><b>${esc(t)}</b><div class="rvtip">${esc(tip)}</div></div></div>`;});
+  h+='</div><p class="muted">규칙기반 점검입니다. 최종 첨삭은 \'AI 첨삭 프롬프트\'로 챗GPT/제미나이의 도움을 받으세요.</p>';
+  box.innerHTML=h;toast("점검을 마쳤습니다");
+}
+function aiPrompt(type,target,txt){
+  return `당신은 채용 담당 경험이 많은 취업 컨설턴트입니다. 아래 ${type}를 첨삭해 주세요.\n[지원 방향] ${target} (재취업/전직)\n[요청]\n1) 분량·구성·필수항목이 적절한지 점검\n2) 두루뭉술한 표현을 구체적 사례·수치로 바꾸는 제안\n3) 강점이 잘 드러나도록 문장 다듬기 (과장·거짓 없이)\n4) 최종 개선본을 통째로 다시 써 주기\n※ 사실이 아닌 내용은 지어내지 말고, 애매한 부분은 질문으로 남겨 주세요.\n\n[내가 쓴 ${type}]\n${txt||"(여기에 내 서류 내용을 붙여넣으세요)"}`;
+}
+
+/* ══════════════ STEP3: 증명사진 (로컬 처리·저장/전송 없음) ══════════════ */
+let camStream=null;
+$("#camOn").onclick=async()=>{
+  if(!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia)){toast("이 환경에선 카메라를 쓸 수 없어요. 파일 불러오기를 쓰세요");return;}
+  try{camStream=await navigator.mediaDevices.getUserMedia({video:{width:480,height:640,facingMode:"user"}});
+    const v=$("#camView");v.srcObject=camStream;v.style.display="block";await v.play();toast("카메라가 켜졌습니다");}
+  catch(e){toast("카메라 권한이 없거나 지원되지 않아요. 파일 불러오기를 쓰세요");}
+};
+$("#camShot").onclick=()=>{const v=$("#camView");if(!v.videoWidth){toast("먼저 카메라를 켜세요");return;}
+  drawPhotoFrom(v,v.videoWidth,v.videoHeight);stopCam();toast("촬영했습니다. 오른쪽에서 다듬으세요");};
+$("#camFile").onchange=e=>{const f=e.target.files&&e.target.files[0];if(!f)return;
+  const img=new Image();img.onload=()=>{drawPhotoFrom(img,img.width,img.height);URL.revokeObjectURL(img.src);toast("사진을 불러왔습니다");};img.src=URL.createObjectURL(f);};
+function stopCam(){if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}$("#camView").style.display="none";}
+function drawPhotoFrom(src,sw,sh){
+  const targ=350/450,ratio=sw/sh;let cw,ch,cx,cy;
+  if(ratio>targ){ch=sh;cw=sh*targ;cx=(sw-cw)/2;cy=0;}else{cw=sw;ch=sw/targ;cx=0;cy=(sh-ch)/2;}
+  window.__photoSrc={src,cw,ch,cx,cy};applyPhoto();
+}
+function applyPhoto(){
+  const p=window.__photoSrc;const cv=$("#photoCanvas"),ctx=cv.getContext("2d");
+  const b=$("#phBright").value,c=$("#phContrast").value,white=$("#phWhite").checked;
+  $("#phBrightV").textContent=b;$("#phContrastV").textContent=c;
+  ctx.save();ctx.clearRect(0,0,350,450);
+  if(white){ctx.fillStyle="#fff";ctx.fillRect(0,0,350,450);}
+  if(p){ctx.filter=`brightness(${b}%) contrast(${c}%)`;ctx.drawImage(p.src,p.cx,p.cy,p.cw,p.ch,0,0,350,450);}
+  ctx.restore();
+}
+["phBright","phContrast"].forEach(id=>$("#"+id).oninput=applyPhoto);
+$("#phWhite").onchange=applyPhoto;
+$("#phDownload").onclick=()=>{if(!window.__photoSrc){toast("먼저 사진을 찍거나 불러오세요");return;}
+  const a=document.createElement("a");a.href=$("#photoCanvas").toDataURL("image/png");a.download="증명사진_3.5x4.5.png";document.body.appendChild(a);a.click();document.body.removeChild(a);toast("사진을 저장했습니다");};
+$("#phInsert").onclick=()=>{if(!window.__photoSrc){toast("먼저 사진을 찍거나 불러오세요");return;}
+  S.photo=$("#photoCanvas").toDataURL("image/png");toast("이력서에 넣습니다 (서류 만들기 시 반영)");};
+$("#phClear").onclick=()=>{S.photo=null;window.__photoSrc=null;$("#photoCanvas").getContext("2d").clearRect(0,0,350,450);toast("사진을 뺐습니다");};
+$("#phAiPrompt").onclick=()=>copyText(
+"아래 요청대로 첨부한 증명사진을 취업용으로 자연스럽게 보정해 주세요.\n"+
+"- 배경: 밝은 단색(흰색 또는 연회색)으로 깔끔하게 교체\n"+
+"- 복장: 단정한 무채색 정장 느낌으로 자연스럽게\n"+
+"- 피부/표정: 과하지 않게 자연 보정, 인상과 얼굴 특징은 그대로 유지\n"+
+"- 규격: 증명사진 비율(3.5:4.5), 얼굴이 중앙에 오도록\n"+
+"※ 실제 얼굴 특징을 바꾸지 말고, 원본을 알아볼 수 있게 해주세요. (사진 파일을 함께 첨부해 요청하세요)");
+
+/* 사진 3모드 탭 전환 */
+$$("#photoTabs button").forEach(b=>b.onclick=()=>{
+  $$("#photoTabs button").forEach(x=>x.classList.remove("on"));b.classList.add("on");
+  $$(".photopanel").forEach(p=>p.style.display=(p.dataset.pm===b.dataset.pm)?"block":"none");
+});
+
+/* ══════════════ STEP5: 빈 양식 3종 ══════════════ */
+const FORMS={
+ resume:
+`[이 력 서]
+
+■ 인적사항
+ 성명: ____________      생년월일: ______________
+ 연락처: __________      이메일: ______________
+ 주소: ______________________________________
+
+■ 학력사항
+ ____년 __월   ○○○○학교 ○○과 (졸업/수료/재학)
+ ____년 __월   ○○○○학교 (졸업)
+
+■ 경력사항  (최근 순)
+ ____.__ ~ ____.__   (회사/상호)     (직위·담당)
+   └ 담당 업무: ____________________________________
+ ____.__ ~ ____.__   (회사/상호)     (직위·담당)
+   └ 담당 업무: ____________________________________
+
+■ 자격증
+ (자격명)            (발급기관)          (취득일)
+ (자격명)            (발급기관)          (취득일)
+
+■ 교육·직업훈련
+ (과정명)   (기관)   (기간)   (시간)
+
+■ 보유 기술·직무능력
+ -
+ -
+
+■ 강점 / 직업가치관
+ -
+
+위 기재 사항은 사실과 다름이 없습니다.
+20__년 __월 __일      성명: ____________ (서명)`,
+ cover:
+`[자기소개서]
+
+1. 성장과정 · 나의 강점  (권장 300~500자)
+   (핵심 강점 1~2가지를 정하고, 그것을 보여준 경험을 구체적으로)
+
+
+2. 지원 동기  (권장 300~500자)
+   (왜 이 직무/회사인지 + 내 경력·강점과의 연결)
+
+
+3. 직무 역량과 경험  (권장 400~600자)
+   (구체 사례 + 수치화된 성과: 매출·비용·건수·기간 등)
+
+
+4. 입사 후 포부  (권장 200~400자)
+   (입사 후 기여 방안 + 성장 계획)
+   `,
+ career:
+`[경력기술서]
+
+■ 경력 요약  (1~2줄)
+   (총 경력 기간 + 핵심 직무를 한 문장으로)
+
+■ 근무처 / 기간 / 직위
+   (회사/상호) | ____.__ ~ ____.__ | (직위)
+
+■ 담당 업무 및 역할
+   -
+   -
+   -
+
+■ 주요 성과  (수치화 권장)
+   - 매출/고객/생산성 등 숫자로: 예) 매출 ○○% 향상, 불량률 ○○%→○○%
+   -
+
+■ 활용 역량 · 관련 NCS 직무
+   -
+   - `
+};
+/* FORMS는 워크스페이스의 '빈 양식으로 시작'(#blankDraft)에서 재사용됩니다. */
+
+/* ══════════════ STEP5: 서류 점검 규칙 (워크스페이스 #docCheck / #docPrompt 에서 사용) ══════════════ */
+const REVIEW={
+ 이력서:{min:120,max:2500,must:[["학력",/학력|졸업|학교|수료/],["경력",/경력|근무|재직|운영|담당/],["자격·기술",/자격|면허|기능사|기술|능력/]]},
+ 자기소개서:{min:400,max:3000,must:[["지원 동기",/지원|동기|이유|끌린|관심/],["강점·역량",/강점|장점|역량|잘하|자신/],["입사 후 포부",/포부|계획|기여|이바지|하고\s?싶|목표/]]},
+ 경력기술서:{min:150,max:3000,must:[["담당 업무",/담당|업무|수행|맡|역할/],["성과",/성과|개선|매출|절감|향상|달성|증가|감소|%|퍼센트/]]}
+};
+const VAGUE=["열심히","최선을 다","성실히","성실하게","다양한","여러 가지","원만한","두루","폭넓","적극적으로","많은 노력","등등","최선"];
+/* runCheck()·aiPrompt()가 위 REVIEW/VAGUE를 사용합니다(워크스페이스 #docCheck / #docPrompt). */
+
+/* 전체 지우기 */
+$("#clearAll").onclick=()=>{ if(confirm("입력한 모든 내용을 지우고 처음부터 다시 시작할까요?")) location.reload(); };
+
+/* ══════════════ STEP5: 채용 진입분야 추천 (규칙기반·재현성·LLM 미사용) ══════════════ */
+function genRecommend(){
+  const ind=DATA[S.industry];
+  const best=S.best5.filter(Boolean);
+  const strengths=[...S.strengths,...splitEtc(S.strEtc)];
+  const certs=rowsTxt("cert").map(r=>r.name).filter(Boolean);
+  const cands=[];
+  const add=(name,score,fromH)=>{if(!name)return;let c=cands.find(x=>x.name===name);if(!c){c={name,score:0,srcH:false};cands.push(c);}c.score+=score;if(fromH)c.srcH=true;};
+  // 업종 전직 방향(NCS 연동) — 핵심 후보
+  ind.jobs.forEach((j,i)=>add(j,6-i*0.5,false));
+  // 홀랜드 상위 2코드 직업
+  if(S.hlDone){[S.hlCode[0],S.hlCode[1]].forEach((code,ci)=>T[code].jobs.slice(0,4).forEach(j=>add(j,ci===0?3:1.5,true)));}
+  const list=cands.sort((a,b)=>b.score-a.score).slice(0,5);
+  const maxScore=list.length?list[0].score:1;
+  const f0=(ind.ncs&&ind.ncs[0])||null;
+  const hlTxt=S.hlDone?`홀랜드 ${S.hlCode}(${T[S.hlCode[0]].name}·${T[S.hlCode[1]].name})`:"";
+  const strTxt=(best.length?best:strengths).slice(0,3).join("·");
+  return list.map(c=>{
+    const reasons=[];
+    if(c.srcH&&hlTxt)reasons.push(`${hlTxt} 성향과 맞음`);
+    else if(hlTxt)reasons.push(`현재 경력(${ind.label})의 NCS 연계 전직 방향`);
+    if(strTxt)reasons.push(`강점 ${strTxt}`);
+    if(f0)reasons.push(`NCS ${f0.sub}(${f0.code}) 연결`);
+    if(certs.length)reasons.push(`보유자격 ${certs.slice(0,2).join("·")}`);
+    if(!reasons.length)reasons.push(`현재 경력(${ind.label}) 기반 전직 방향`);
+    return {name:c.name,fit:(c.score>=maxScore*0.75?"상":"중"),reasons};
+  });
+}
+$("#recoRun").onclick=()=>{
+  if(!S.transDone)toast("STEP2 직무번역을 먼저 실행하면 더 정확합니다");
+  const recs=genRecommend();
+  let h=`<div class="box info" style="margin-top:12px"><b>추천 채용 진입분야 ${recs.length}개</b> — 등록하신 진단·직무·이력을 종합했습니다.</div><div class="recogrid">`;
+  recs.forEach((r,i)=>{
+    h+=`<div class="recocard"><div class="recohead"><span class="reconum">${i+1}</span><span class="reconame">${esc(r.name)}</span><span class="recofit fit-${r.fit}">적합도 ${r.fit}</span></div>
+      <div class="recoreason">${r.reasons.map(x=>esc(x)).join(" · ")}</div>
+      <div class="ncsLinks"><a href="${NCS_SEARCH}" target="_blank" rel="noopener">🔎 NCS 검색</a><a href="${HRD_SEARCH(r.name)}" target="_blank" rel="noopener">🎓 고용24 훈련과정</a></div></div>`;
+  });
+  h+=`</div><p class="muted">규칙기반 추천(홀랜드 상위코드 + 업종 NCS 전직 방향 + 강점·자격 매칭). 참고용이며 상담사·본인 검토를 권장합니다. <span class="chk">확인</span></p>`;
+  $("#recoResult").innerHTML=h;
+  toast("진입분야를 추천했습니다");
+};
+
+switchDoc("resume");
+renderDiagSummary();
+</script>
+</body>
+</html>
